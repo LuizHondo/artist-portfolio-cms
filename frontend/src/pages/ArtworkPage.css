@@ -1,0 +1,259 @@
+.artwork-page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.artwork-header {
+  margin-bottom: 2rem;
+}
+
+.btn-back-small {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: color 0.3s;
+}
+
+.btn-back-small:hover {
+  color: #764ba2;
+}
+
+.artwork-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.artwork-meta {
+  display: flex;
+  gap: 2rem;
+  font-size: 1rem;
+}
+
+.artwork-meta .year {
+  color: #666;
+  font-weight: 500;
+}
+
+.artwork-meta .medium {
+  color: #667eea;
+  font-weight: 600;
+}
+
+/* Summary */
+.summary-section {
+  background: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #333;
+}
+
+/* Tags */
+.tags-section {
+  margin-bottom: 3rem;
+}
+
+.tags-section h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.tags {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.tags .tag {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Process Timeline */
+.process-section {
+  margin-top: 4rem;
+}
+
+.process-section h2 {
+  font-size: 2rem;
+  margin-bottom: 3rem;
+  text-align: center;
+  color: #333;
+}
+
+.timeline {
+  position: relative;
+  padding: 2rem 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to bottom, #667eea, #764ba2);
+  top: 0;
+}
+
+.timeline-item {
+  margin-bottom: 3rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.timeline-item.right {
+  direction: rtl;
+}
+
+.timeline-item.right .timeline-content {
+  direction: ltr;
+}
+
+.timeline-marker {
+  display: flex;
+  justify-content: center;
+}
+
+.marker-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 0 4px white, 0 0 0 6px #667eea;
+}
+
+.timeline-content {
+  padding: 0;
+}
+
+.entry-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.entry-card:hover {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.entry-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.entry-image {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  object-fit: cover;
+  max-height: 300px;
+}
+
+.entry-card p {
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Gallery */
+.gallery-section {
+  margin-top: 3rem;
+}
+
+.full-width-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Error */
+.error-container {
+  text-align: center;
+  padding: 3rem;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  color: #721c24;
+}
+
+.btn-back {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+  transition: background 0.3s;
+}
+
+.btn-back:hover {
+  background: #764ba2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .artwork-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .timeline::before {
+    left: 10px;
+  }
+
+  .timeline-item {
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-bottom: 2rem;
+  }
+
+  .timeline-item.right {
+    direction: ltr;
+  }
+
+  .timeline-marker {
+    margin-bottom: 1rem;
+  }
+
+  .entry-card {
+    padding: 1.5rem;
+  }
+
+  .artwork-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .tags {
+    gap: 0.5rem;
+  }
+}

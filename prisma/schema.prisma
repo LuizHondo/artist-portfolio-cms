@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Main artwork entity
+model Artwork {
+  id                String             @id @default(cuid())
+  title             String
+  slug              String             @unique
+  summary           String
+  coverImage        String
+  featuredPriority  Int                @default(0) // 0 = not featured, 1 = hero, 2-3 = featured grid
+  medium            String
+  yearCreated       Int
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  // Relations
+  entries           ArtworkEntry[]
+  artworkTags       ArtworkTag[]
+
+  @@map("artworks")
+}
+
+// Process entries for each artwork (journey documentation)
+model ArtworkEntry {
+  id              String    @id @default(cuid())
+  artwork         Artwork   @relation(fields: [artworkId], references: [id], onDelete: Cascade)
+  artworkId       String
+  title           String
+  imageUrl        String
+  description     String
+  displayOrder    Int
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("artwork_entries")
+}
+
+// System-controlled tags (predefined)
+model Tag {
+  id        String        @id @default(cuid())
+  name      String        @unique
+  slug      String        @unique
+  createdAt DateTime      @default(now())
+
+  // Relations
+  artworkTags ArtworkTag[]
+
+  @@map("tags")
+}
+
+// Junction table: many-to-many relationship between artworks and tags
+model ArtworkTag {
+  id        String   @id @default(cuid())
+  artwork   Artwork  @relation(fields: [artworkId], references: [id], onDelete: Cascade)
+  artworkId String
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId     String
+
+  @@unique([artworkId, tagId])
+  @@map("artwork_tags")
+}
+
+// Admin user for authentication
+model AdminUser {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String   // hashed with bcryptjs
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admin_users")
+}
