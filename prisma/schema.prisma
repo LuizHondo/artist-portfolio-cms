@@ -38,6 +38,7 @@ model ArtworkEntry {
   title           String
   imageUrl        String
   description     String
+  size            String    @default("medium")
   displayOrder    Int
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt

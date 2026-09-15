@@ -179,6 +179,7 @@ export class ArtworkService {
         title: data.title,
         description: data.description,
         imageUrl: data.imageUrl,
+        size: data.size,
         displayOrder: data.displayOrder,
       },
     });

@@ -17,6 +17,7 @@ export const ArtworkEntrySchema = z.object({
   title: z.string().min(3),
   description: z.string().min(10),
   imageUrl: z.string().url(),
+  size: z.enum(['small', 'medium', 'large']),
   displayOrder: z.number().int().min(1),
 });
 
