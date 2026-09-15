@@ -27,7 +27,11 @@ build/
 *.db
 *.sqlite
 *.sqlite3
+*.db-journal
 dev.db
+
+# Local Claude settings
+.claude/settings.local.json
 
 # Uploads
 uploads/
