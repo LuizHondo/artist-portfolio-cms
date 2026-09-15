@@ -1,0 +1,168 @@
+import type { CSSProperties } from 'react';
+
+// Ported verbatim from the design canvas's project-v2.jsx style objects.
+export const projV2Styles: Record<string, CSSProperties> = {
+  page: { width: '100%', maxWidth: 1440, margin: '0 auto', color: '#1a1714', fontFamily: '"Newsreader", Georgia, serif' },
+
+  back: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '28px 64px 0',
+    fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
+    fontSize: 11,
+    letterSpacing: '0.18em',
+    textTransform: 'uppercase',
+    fontWeight: 600,
+    cursor: 'pointer',
+    opacity: 0.6,
+    textDecoration: 'none',
+    color: 'inherit',
+  },
+
+  titleBlock: {
+    padding: '40px 64px 48px',
+    display: 'grid',
+    gridTemplateColumns: '1.4fr 1fr',
+    gap: 56,
+    alignItems: 'end',
+  },
+  plateNum: {
+    fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
+    fontSize: 12,
+    letterSpacing: '0.22em',
+    opacity: 0.55,
+    marginBottom: 12,
+  },
+  bigTitle: {
+    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontSize: 104,
+    lineHeight: 0.88,
+    margin: 0,
+    fontWeight: 500,
+    letterSpacing: '-0.018em',
+  },
+  meta: {
+    fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
+    fontSize: 12,
+    lineHeight: 1.9,
+    fontWeight: 400,
+    color: '#3b3128',
+  },
+  metaRow: {
+    display: 'grid',
+    gridTemplateColumns: '90px 1fr',
+    borderBottom: '1px dashed rgba(26,23,20,0.2)',
+    padding: '6px 0',
+  },
+  metaKey: { opacity: 0.5, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: 11 },
+
+  heroWrap: { margin: '0 64px', position: 'relative', paddingBottom: 60 },
+  heroPlateImg: { width: '100%', objectFit: 'cover', display: 'block' },
+  heroCaption: {
+    fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
+    fontSize: 10,
+    letterSpacing: '0.2em',
+    textTransform: 'uppercase',
+    fontWeight: 600,
+    marginTop: 18,
+    textAlign: 'center',
+    color: '#3b3128',
+    opacity: 0.6,
+  },
+
+  entriesWrap: {
+    padding: '96px 64px 40px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(12, 1fr)',
+    gap: 40,
+    rowGap: 88,
+  },
+  entryImg: { width: '100%', height: '100%', display: 'block', objectFit: 'cover' },
+  entryNum: {
+    fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
+    fontSize: 11,
+    letterSpacing: '0.22em',
+    opacity: 0.5,
+    marginBottom: 8,
+  },
+  entryTitle: {
+    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontSize: 26,
+    fontWeight: 500,
+    letterSpacing: '-0.01em',
+    margin: '0 0 10px',
+  },
+  entryDesc: { fontSize: 18, lineHeight: 1.7, maxWidth: '62ch' },
+  entryTextPad: { paddingTop: 18 },
+
+  finale: { background: '#1a1714', color: '#f6f4ef', padding: '120px 64px', textAlign: 'center', position: 'relative' },
+  finaleRule: { width: 60, height: 1, background: '#f6f4ef', margin: '0 auto 28px' },
+  finaleSmall: {
+    fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
+    fontSize: 11,
+    letterSpacing: '0.3em',
+    textTransform: 'uppercase',
+    fontWeight: 600,
+    opacity: 0.6,
+  },
+  finaleBig: {
+    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontSize: 176,
+    lineHeight: 0.84,
+    margin: '28px 0',
+    letterSpacing: '-0.018em',
+    fontWeight: 500,
+    fontStyle: 'italic',
+  },
+
+  footer: { display: 'grid', gridTemplateColumns: '1.3fr 1fr', padding: '96px 64px', gap: 56 },
+  footTitle: {
+    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontSize: 36,
+    fontWeight: 500,
+    letterSpacing: '-0.012em',
+    margin: '0 0 26px',
+  },
+  relGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 },
+  relCard: { cursor: 'pointer', textDecoration: 'none', color: 'inherit', display: 'block' },
+  relCap: { fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif', fontSize: 17, fontWeight: 400, marginTop: 10 },
+
+  contact: { background: '#ffffff', padding: 36, border: '1px solid rgba(26,23,20,0.2)' },
+  contactNote: {
+    fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
+    fontSize: 11,
+    letterSpacing: '0.18em',
+    textTransform: 'uppercase',
+    fontWeight: 600,
+    display: 'inline-block',
+    marginBottom: 18,
+  },
+  contactEmail: { fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif', fontSize: 22, fontWeight: 400, fontStyle: 'italic', marginBottom: 24 },
+  socials: { display: 'flex', gap: 12, marginBottom: 24 },
+  socialBtn: { width: 40, height: 40, borderRadius: 0, border: '1px solid rgba(26,23,20,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+  contactBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 12,
+    padding: '14px 24px',
+    color: '#f6f4ef',
+    border: 'none',
+    cursor: 'pointer',
+    fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
+    fontSize: 11,
+    letterSpacing: '0.18em',
+    textTransform: 'uppercase',
+    fontWeight: 700,
+    textDecoration: 'none',
+  },
+};
+
+// imageSize → grid span (of 12) + plate height. Backend only ever sends
+// small/medium/large (see add-artwork-entry-size); design.md maps those to
+// 3 of the design's 5 tiers, dropping wide/tall (unreachable from admin data).
+export const SPAN: Record<'small' | 'medium' | 'large', [number, number]> = {
+  small: [4, 300],
+  medium: [6, 420],
+  large: [12, 760],
+};

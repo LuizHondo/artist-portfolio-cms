@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f2efe9;
+  --foreground: #1a1714;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  background-image:
+    radial-gradient(rgba(26, 23, 20, 0.045) 0.55px, transparent 0.7px),
+    radial-gradient(rgba(255, 255, 255, 0.32) 0.7px, transparent 0.9px),
+    repeating-linear-gradient(103deg, rgba(26, 23, 20, 0.018) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(13deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 11px);
+  background-attachment: fixed;
+  background-size: 7px 7px, 11px 11px, 37px 37px, 53px 53px;
+  background-blend-mode: multiply, screen, multiply, screen;
+  color: var(--foreground);
+}
+
+/* Landscape hero slides get cropped by the fixed-height hero, so the
+   active one pans slowly — matches the design canvas's HTML shell. */
+@keyframes heroPan {
+  from {
+    transform: scale(1.1) translate3d(-2.2%, 0.6%, 0);
+  }
+  to {
+    transform: scale(1.1) translate3d(2.2%, -0.6%, 0);
+  }
+}
+
+.archive-rail {
+  scrollbar-width: none;
+}
+.archive-rail::-webkit-scrollbar {
+  display: none;
+}

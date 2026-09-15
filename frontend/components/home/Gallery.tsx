@@ -1,0 +1,140 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { Icon, PlaceholderImg } from '@/lib/design/shared';
+import { useIsMobile } from '@/lib/useIsMobile';
+import type { Artwork } from '@/lib/types';
+import { homeV1Styles as s } from './homeStyles';
+
+export function Gallery({ artworks }: { artworks: Artwork[] }) {
+  const isMobile = useIsMobile();
+  const [filter, setFilter] = useState('All');
+  const railRef = useRef<HTMLDivElement>(null);
+  const [railScrolls, setRailScrolls] = useState(false);
+
+  // featuredPriority drives placement: 0 never appears, 1 leads, 2 mid,
+  // 3 gets the archive rail.
+  const shown = artworks.filter((a) => a.featuredPriority > 0);
+  const mediums = ['All', ...Array.from(new Set(shown.map((a) => a.medium.split(' · ')[0])))];
+  const inFilter = (a: Artwork) => filter === 'All' || a.medium.startsWith(filter);
+  const tier = (p: number) => shown.filter((a) => a.featuredPriority === p && inFilter(a));
+  const t1 = tier(1);
+  const t2 = tier(2);
+  const t3 = tier(3);
+  const years = shown.map((a) => a.yearCreated);
+
+  const scrollRail = (dir: number) => railRef.current?.scrollBy({ left: dir * 504, behavior: 'smooth' });
+
+  useEffect(() => {
+    const el = railRef.current;
+    if (!el) return;
+    const check = () => setRailScrolls(el.scrollWidth > el.clientWidth + 4);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [t3.length, filter]);
+
+  return (
+    <section id="gallery" style={{ ...s.section, ...(isMobile ? { padding: '56px 20px' } : {}) }}>
+      <div style={s.sectionHead}>
+        <h2 style={s.sectionTitle}>Artworks</h2>
+        {shown.length > 0 && (
+          <div style={s.sectionSub}>
+            {Math.min(...years)} — {Math.max(...years)} · {shown.length} artworks
+          </div>
+        )}
+      </div>
+
+      <div style={s.filters}>
+        {mediums.map((m) => (
+          <button
+            key={m}
+            onClick={() => setFilter(m)}
+            style={{ ...s.filter, ...(m === filter ? s.filterActive : {}) }}
+          >
+            {m}
+          </button>
+        ))}
+      </div>
+
+      {t1.length > 0 && (
+        <>
+          <div style={s.tierHead}>
+            <span style={s.tierLabel}>Featured</span>
+            <span style={s.tierNote}>priority 01</span>
+          </div>
+          <div style={{ ...s.tier1Grid, ...(isMobile ? { gridTemplateColumns: '1fr', gap: 36 } : {}) }}>
+            {t1.map((a) => (
+              <Link key={a.id} href={`/artwork/${a.slug}`} style={s.card}>
+                <PlaceholderImg src={a.coverImage} ratio="4/3" />
+                <div style={s.cardCaption}>
+                  <h3 style={{ ...s.cardTitle, fontSize: 30 }}>{a.title}</h3>
+                  <div style={s.cardMeta}>{a.yearCreated}</div>
+                </div>
+                <p style={s.cardSummary}>{a.summary}</p>
+                <div style={s.cardRule}>{a.medium}</div>
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+
+      {t2.length > 0 && (
+        <>
+          <div style={s.tierHead}>
+            <span style={s.tierLabel}>Also worth a look</span>
+            <span style={s.tierNote}>priority 02</span>
+          </div>
+          <div style={{ ...s.tier2Grid, ...(isMobile ? { gridTemplateColumns: '1fr', gap: 24 } : {}) }}>
+            {t2.map((a) => (
+              <Link key={a.id} href={`/artwork/${a.slug}`} style={s.card}>
+                <PlaceholderImg src={a.coverImage} ratio="1/1" />
+                <div style={s.cardCaption}>
+                  <h3 style={{ ...s.cardTitle, fontSize: 20 }}>{a.title}</h3>
+                  <div style={s.cardMeta}>{a.yearCreated}</div>
+                </div>
+                <div style={s.cardRule}>{a.medium}</div>
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+
+      {t3.length > 0 && (
+        <>
+          <div style={s.tierHead}>
+            <span style={s.tierLabel}>Archive</span>
+            <span style={s.tierNote}>priority 03</span>
+          </div>
+          <div style={s.railWrap}>
+            {railScrolls && (
+              <button style={{ ...s.railBtn, left: -8 }} onClick={() => scrollRail(-1)} aria-label="previous">
+                <Icon name="arrow-left" size={18} />
+              </button>
+            )}
+            <div ref={railRef} className="archive-rail" style={s.rail}>
+              {t3.slice(0, 10).map((a) => (
+                <Link key={a.id} href={`/artwork/${a.slug}`} style={{ ...s.card, ...s.railItem }}>
+                  <PlaceholderImg src={a.coverImage} ratio="3/4" />
+                  <div style={{ ...s.cardCaption, justifyContent: 'center' }}>
+                    <h3 style={{ ...s.cardTitle, fontSize: 15 }}>{a.title}</h3>
+                  </div>
+                  <div style={{ ...s.cardMeta, marginTop: 2, textAlign: 'center' }}>{a.yearCreated}</div>
+                </Link>
+              ))}
+            </div>
+            {railScrolls && (
+              <button style={{ ...s.railBtn, right: -8 }} onClick={() => scrollRail(1)} aria-label="next">
+                <Icon name="arrow" size={18} />
+              </button>
+            )}
+          </div>
+        </>
+      )}
+
+      {t1.length + t2.length + t3.length === 0 && <div style={s.empty}>Nothing in this medium yet.</div>}
+    </section>
+  );
+}
