@@ -1,0 +1,405 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-09-09T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "wrk_portfolio_cms",
+      "_type": "workspace",
+      "name": "Raul Portfolio CMS",
+      "description": "Portfolio CMS API for Raul Barbosa Neto - Illustrator, 3D Sculptor, Animator",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_base",
+      "_type": "environment",
+      "parentId": "wrk_portfolio_cms",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000/api",
+        "token": "",
+        "admin_email": "admin@raulbarbosa.com",
+        "admin_password": "password"
+      },
+      "dataPropertyOrder": {
+        "&": ["base_url", "token", "admin_email", "admin_password"]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1
+    },
+    {
+      "_id": "fld_public_endpoints",
+      "_type": "request_group",
+      "parentId": "wrk_portfolio_cms",
+      "name": "📚 Public Endpoints",
+      "description": "No authentication required",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1
+    },
+    {
+      "_id": "req_health_check",
+      "_type": "request",
+      "parentId": "fld_public_endpoints",
+      "name": "Health Check",
+      "description": "Check if API is running",
+      "method": "GET",
+      "url": "http://localhost:3000/health",
+      "headers": [
+        {
+          "name": "User-Agent",
+          "value": "insomnia/2023.5.8"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 1
+    },
+    {
+      "_id": "req_list_artworks",
+      "_type": "request",
+      "parentId": "fld_public_endpoints",
+      "name": "List All Artworks",
+      "description": "Get all artworks with optional tag filter",
+      "method": "GET",
+      "url": "{{ base_url }}/artworks",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "tag",
+          "value": "",
+          "description": "Optional: Filter by tag slug (e.g. character-design)"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 2
+    },
+    {
+      "_id": "req_featured_artworks",
+      "_type": "request",
+      "parentId": "fld_public_endpoints",
+      "name": "Get Featured Artworks",
+      "description": "Get featured artworks (featuredPriority > 0)",
+      "method": "GET",
+      "url": "{{ base_url }}/artworks/featured",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 3
+    },
+    {
+      "_id": "req_get_artwork_by_slug",
+      "_type": "request",
+      "parentId": "fld_public_endpoints",
+      "name": "Get Single Artwork by Slug",
+      "description": "Get a specific artwork by its slug",
+      "method": "GET",
+      "url": "{{ base_url }}/artworks/cyberpunk-samurai",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 4
+    },
+    {
+      "_id": "req_list_tags",
+      "_type": "request",
+      "parentId": "fld_public_endpoints",
+      "name": "List All Tags",
+      "description": "Get all available tags",
+      "method": "GET",
+      "url": "{{ base_url }}/tags",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 5
+    },
+    {
+      "_id": "req_get_tag_by_slug",
+      "_type": "request",
+      "parentId": "fld_public_endpoints",
+      "name": "Get Single Tag by Slug",
+      "description": "Get a specific tag by its slug",
+      "method": "GET",
+      "url": "{{ base_url }}/tags/character-design",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 6
+    },
+    {
+      "_id": "fld_auth",
+      "_type": "request_group",
+      "parentId": "wrk_portfolio_cms",
+      "name": "🔐 Authentication",
+      "description": "Admin authentication endpoints",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 2
+    },
+    {
+      "_id": "req_admin_login",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Admin Login",
+      "description": "Login as admin and get JWT token (Valid for 7 days)",
+      "method": "POST",
+      "url": "{{ base_url }}/admin/login",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ admin_email }}\",\n  \"password\": \"{{ admin_password }}\"\n}"
+      },
+      "metaSortKey": 1
+    },
+    {
+      "_id": "req_admin_profile",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Get Admin Profile",
+      "description": "Get authenticated admin profile information",
+      "method": "GET",
+      "url": "{{ base_url }}/admin/profile",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 2
+    },
+    {
+      "_id": "req_change_password",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Change Password",
+      "description": "Change the admin password (requires current password)",
+      "method": "POST",
+      "url": "{{ base_url }}/admin/change-password",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"currentPassword\": \"{{ admin_password }}\",\n  \"newPassword\": \"new_password_123\",\n  \"confirmPassword\": \"new_password_123\"\n}"
+      },
+      "metaSortKey": 3
+    },
+    {
+      "_id": "fld_artwork_management",
+      "_type": "request_group",
+      "parentId": "wrk_portfolio_cms",
+      "name": "🎨 Artwork Management",
+      "description": "CRUD operations for artworks (requires authentication)",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 3
+    },
+    {
+      "_id": "req_create_artwork",
+      "_type": "request",
+      "parentId": "fld_artwork_management",
+      "name": "Create Artwork",
+      "description": "Create a new artwork",
+      "method": "POST",
+      "url": "{{ base_url }}/admin/artworks",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Cyberpunk Samurai\",\n  \"summary\": \"Character exploration inspired by futuristic Japan.\",\n  \"medium\": \"Digital Painting\",\n  \"yearCreated\": 2026,\n  \"coverImage\": \"https://example.com/cover.webp\",\n  \"featuredPriority\": 1,\n  \"tagIds\": [\"tag_001\", \"tag_002\"]\n}"
+      },
+      "metaSortKey": 1
+    },
+    {
+      "_id": "req_update_artwork",
+      "_type": "request",
+      "parentId": "fld_artwork_management",
+      "name": "Update Artwork",
+      "description": "Update an existing artwork (all fields optional)",
+      "method": "PUT",
+      "url": "{{ base_url }}/admin/artworks/art_001",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Updated Cyberpunk Samurai\",\n  \"featuredPriority\": 2\n}"
+      },
+      "metaSortKey": 2
+    },
+    {
+      "_id": "req_delete_artwork",
+      "_type": "request",
+      "parentId": "fld_artwork_management",
+      "name": "Delete Artwork",
+      "description": "Delete an artwork and all its entries",
+      "method": "DELETE",
+      "url": "{{ base_url }}/admin/artworks/art_001",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 3
+    },
+    {
+      "_id": "fld_process_entries",
+      "_type": "request_group",
+      "parentId": "wrk_portfolio_cms",
+      "name": "📸 Process Entries (Timeline)",
+      "description": "Manage creative process entries/timeline for artworks",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 4
+    },
+    {
+      "_id": "req_create_entry",
+      "_type": "request",
+      "parentId": "fld_process_entries",
+      "name": "Create Process Entry",
+      "description": "Add a new entry to an artwork's creative process timeline",
+      "method": "POST",
+      "url": "{{ base_url }}/admin/artworks/art_001/entries",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Initial Sketch\",\n  \"description\": \"Initial silhouette exploration.\",\n  \"imageUrl\": \"https://example.com/sketch.webp\",\n  \"displayOrder\": 1\n}"
+      },
+      "metaSortKey": 1
+    },
+    {
+      "_id": "req_update_entry",
+      "_type": "request",
+      "parentId": "fld_process_entries",
+      "name": "Update Process Entry",
+      "description": "Update an existing process entry",
+      "method": "PUT",
+      "url": "{{ base_url }}/admin/entries/entry_001",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Updated Sketch\",\n  \"description\": \"Refined silhouette exploration.\",\n  \"displayOrder\": 1\n}"
+      },
+      "metaSortKey": 2
+    },
+    {
+      "_id": "req_delete_entry",
+      "_type": "request",
+      "parentId": "fld_process_entries",
+      "name": "Delete Process Entry",
+      "description": "Delete a process entry from an artwork",
+      "method": "DELETE",
+      "url": "{{ base_url }}/admin/entries/entry_001",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "parameters": [],
+      "authentication": {},
+      "metaSortKey": 3
+    }
+  ]
+}
