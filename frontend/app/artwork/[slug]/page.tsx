@@ -6,7 +6,7 @@ import { getArtworks, getBySlug } from '@/lib/api/artworks';
 import { PublicNav } from '@/components/PublicNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { CONTACT_EMAIL, enabledSocials } from '@/lib/social-links';
-import { ACCENT_COLOR } from '@/lib/theme';
+import { COLORS } from '@/lib/theme';
 import { projV2Styles as s } from '@/components/artwork/artworkStyles';
 
 export default async function ArtworkPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -121,7 +121,7 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
         <div>
           <h3 style={s.footTitle}>Get in touch</h3>
           <div style={s.contact}>
-            <div style={{ ...s.contactNote, color: ACCENT_COLOR }}>tea? coffee? a cat photo?</div>
+            <div style={{ ...s.contactNote, color: COLORS.accent }}>tea? coffee? a cat photo?</div>
             <div style={s.contactEmail}>
               <a href={`mailto:${CONTACT_EMAIL}`} style={{ color: 'inherit', textDecoration: 'none' }}>
                 {CONTACT_EMAIL}
@@ -134,15 +134,15 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
                   href={social.url}
                   target="_blank"
                   rel="noreferrer"
-                  style={{ ...s.socialBtn, color: '#1a1714', textDecoration: 'none' }}
+                  style={{ ...s.socialBtn, color: COLORS.ink, textDecoration: 'none' }}
                   title={social.url}
                 >
                   <Icon name={social.key} size={18} />
                 </a>
               ))}
             </div>
-            <a href={`mailto:${CONTACT_EMAIL}`} style={{ ...s.contactBtn, background: ACCENT_COLOR }}>
-              Let&apos;s talk! <Icon name="arrow" size={14} color="#f6f4ef" />
+            <a href={`mailto:${CONTACT_EMAIL}`} style={{ ...s.contactBtn, background: COLORS.accent }}>
+              Let&apos;s talk! <Icon name="arrow" size={14} color={COLORS.cream} />
             </a>
           </div>
         </div>

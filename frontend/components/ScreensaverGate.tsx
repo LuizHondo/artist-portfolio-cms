@@ -9,6 +9,7 @@ import { useIsMobile } from '@/lib/useIsMobile';
 import { PublicNav } from '@/components/PublicNav';
 import MorphSlider from '@/components/home/MorphSlider';
 import { homeV1Styles as s } from '@/components/home/homeStyles';
+import { COLORS } from '@/lib/theme';
 
 export function ScreensaverGate({ slides, children }: { slides: string[]; children: React.ReactNode }) {
   const router = useRouter();
@@ -18,7 +19,6 @@ export function ScreensaverGate({ slides, children }: { slides: string[]; childr
   // if we're on the home route, matching "locked on / only" without a flash.
   const [locked, setLocked] = useState(false);
   const [fadeIn, setFadeIn] = useState(false);
-  const idleTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const morphItems = useMemo(() => slides.map((image) => ({ image })), [slides]);
 
   // A click that refocuses the window also fires as a real click on whatever's
@@ -38,7 +38,7 @@ export function ScreensaverGate({ slides, children }: { slides: string[]; childr
     if (window.location.pathname === '/') setLocked(true);
   }, []);
 
-  // Fade the lockscreen in each time it appears (first load and idle-triggered relock).
+  // Fade the lockscreen in on first load.
   useEffect(() => {
     if (!locked) return;
     setFadeIn(false);
@@ -64,23 +64,6 @@ export function ScreensaverGate({ slides, children }: { slides: string[]; childr
     return () => {
       root.style.overflow = previousRootOverflow;
       body.style.overflow = previousBodyOverflow;
-    };
-  }, [locked]);
-
-  // 5 minutes of no interaction after unlocking returns the page to its lockscreen.
-  useEffect(() => {
-    if (locked) return;
-
-    const resetIdleTimer = () => {
-      clearTimeout(idleTimer.current);
-      idleTimer.current = setTimeout(() => setLocked(true), 5 * 60 * 1000);
-    };
-    const events: Array<keyof WindowEventMap> = ['mousemove', 'mousedown', 'keydown', 'wheel', 'touchstart'];
-    resetIdleTimer();
-    events.forEach((e) => window.addEventListener(e, resetIdleTimer, { passive: true }));
-    return () => {
-      events.forEach((e) => window.removeEventListener(e, resetIdleTimer));
-      clearTimeout(idleTimer.current);
     };
   }, [locked]);
 
@@ -118,8 +101,8 @@ export function ScreensaverGate({ slides, children }: { slides: string[]; childr
               aberration={0.35}
               drift={0.4}
               autoplay
-              autoplayDelay={5}
-              showCaptions={false}
+              autoplayDelay={3}
+              showCaptions={true}
               showControls={false}
               showIndicators={false}
               radius={0}
@@ -127,7 +110,7 @@ export function ScreensaverGate({ slides, children }: { slides: string[]; childr
           </div>
           <div style={{ ...s.heroScrim, opacity: 0.25, transition: 'opacity .8s' }} />
 
-          <PublicNav active="Home" variant="hero" locked={locked} />
+          <PublicNav variant="hero" locked={locked} />
 
           {!isMobile && (
             <div style={{ ...s.heroBottomLeft, opacity: contentOpacity, transition: 'opacity .8s', width: 726 }}>
@@ -146,7 +129,7 @@ export function ScreensaverGate({ slides, children }: { slides: string[]; childr
                       style={{ ...s.hbrSocialBtn, textDecoration: 'none' }}
                       title={social.url}
                     >
-                      <Icon name={social.key} size={14} color="#f6f4ef" />
+                      <Icon name={social.key} size={14} color={COLORS.cream} />
                     </a>
                   ))}
                 </div>
@@ -170,10 +153,10 @@ export function ScreensaverGate({ slides, children }: { slides: string[]; childr
               {enabledSocials.map((social) => (
                 <a key={social.key} href={social.url} target="_blank" rel="noreferrer" style={{ ...s.mobileLink, opacity: contentOpacity, transition: 'opacity .8s' }} title={social.url}>
                   <span style={s.mobileLinkLeft}>
-                    <Icon name={social.key} size={24} color="#f6f4ef" />
+                    <Icon name={social.key} size={24} color={COLORS.cream} />
                     <span style={{ textTransform: 'capitalize' }}>{social.key}</span>
                   </span>
-                  <Icon name="arrow" size={18} color="#f6f4ef" />
+                  <Icon name="arrow" size={18} color={COLORS.cream} />
                 </a>
               ))}
               <Link href="/links" style={{ ...s.mobileAll, opacity: contentOpacity, pointerEvents: 'auto', transition: 'opacity .8s' }}>

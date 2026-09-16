@@ -2,14 +2,15 @@ import Link from 'next/link';
 import { getFeatured } from '@/lib/api/artworks';
 import { Icon } from '@/lib/design/shared';
 import { CONTACT_EMAIL, enabledSocials } from '@/lib/social-links';
+import { COLORS } from '@/lib/theme';
 
 const s = {
   page: {
     width: '100%',
     minHeight: 1000,
-    color: '#f6f4ef',
+    color: COLORS.cream,
     fontFamily: '"Newsreader", Georgia, serif',
-    background: '#1a1714',
+    background: COLORS.ink,
     padding: '64px 0 96px',
     display: 'flex',
     flexDirection: 'column' as const,
@@ -20,7 +21,7 @@ const s = {
     width: 140,
     height: 140,
     borderRadius: 999,
-    background: '#f6f4ef',
+    background: COLORS.cream,
     margin: '0 auto 20px',
     display: 'flex',
     alignItems: 'center',
@@ -58,7 +59,7 @@ const s = {
     padding: '18px 22px',
     background: 'rgba(244,236,216,0.06)',
     border: '1px solid rgba(244,236,216,0.2)',
-    color: '#f6f4ef',
+    color: COLORS.cream,
     fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
     fontSize: 19,
     fontWeight: 500,
@@ -66,7 +67,7 @@ const s = {
   },
   btnLeft: { display: 'flex', alignItems: 'center', gap: 14 },
   btnHandle: { fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif', fontSize: 11, letterSpacing: '0.06em', opacity: 0.55 },
-  btnFeatured: { background: '#f6f4ef', color: '#1a1714', border: '1px solid #f6f4ef' },
+  btnFeatured: { background: COLORS.cream, color: COLORS.ink, border: `1px solid ${COLORS.cream}` },
   foot: {
     marginTop: 56,
     textAlign: 'center' as const,
@@ -136,13 +137,13 @@ export default async function LinksPage() {
             const inner = (
               <>
                 <div style={s.btnLeft}>
-                  <Icon name={l.icon} size={20} color={l.featured ? '#1a1714' : '#f6f4ef'} />
+                  <Icon name={l.icon} size={20} color={l.featured ? COLORS.ink : COLORS.cream} />
                   <div>
                     <div>{l.label}</div>
                     <div style={{ ...s.btnHandle, color: l.featured ? 'rgba(26,23,20,0.55)' : 'rgba(244,236,216,0.55)' }}>{l.sub}</div>
                   </div>
                 </div>
-                <Icon name="arrow" size={16} color={l.featured ? '#1a1714' : '#f6f4ef'} />
+                <Icon name="arrow" size={16} color={l.featured ? COLORS.ink : COLORS.cream} />
               </>
             );
             const style = { ...s.btn, ...(l.featured ? s.btnFeatured : {}) };

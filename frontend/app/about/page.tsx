@@ -3,13 +3,14 @@ import { Paper, Icon } from '@/lib/design/shared';
 import { PublicNav } from '@/components/PublicNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { CONTACT_EMAIL, enabledSocials } from '@/lib/social-links';
+import { COLORS } from '@/lib/theme';
 
 // No backend model for bio/skills copy (proposal.md) — local constants,
 // matching the design canvas's data.jsx RAUL.perfil.
 const SKILLS = ['Illustration', 'Character Design', 'Concept Art', 'Storyboard', 'Environment Design', 'Visual Development'];
 
 const s = {
-  page: { width: '100%', maxWidth: 1440, margin: '0 auto', color: '#1a1714', fontFamily: '"Newsreader", Georgia, serif' },
+  page: { width: '100%', maxWidth: 1440, margin: '0 auto', color: COLORS.ink, fontFamily: '"Newsreader", Georgia, serif' },
   band: {
     padding: '40px 56px 24px',
     display: 'flex',
@@ -73,8 +74,8 @@ const s = {
     alignItems: 'center',
     gap: 12,
     padding: '14px 26px',
-    background: '#1a1714',
-    color: '#f6f4ef',
+    background: COLORS.ink,
+    color: COLORS.cream,
     border: 'none',
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
     fontSize: 11,
@@ -89,8 +90,8 @@ const s = {
     gap: 12,
     padding: '14px 26px',
     background: 'transparent',
-    color: '#1a1714',
-    border: '1px solid #1a1714',
+    color: COLORS.ink,
+    border: `1px solid ${COLORS.ink}`,
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
     fontSize: 11,
     letterSpacing: '0.18em',
@@ -105,7 +106,7 @@ const s = {
     gap: 8,
     padding: '10px 14px',
     border: '1px solid rgba(26,23,20,0.3)',
-    color: '#1a1714',
+    color: COLORS.ink,
     textDecoration: 'none',
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
     fontSize: 12,
@@ -118,8 +119,8 @@ const s = {
     alignItems: 'center',
     gap: 8,
     padding: '10px 14px',
-    background: '#1a1714',
-    color: '#f6f4ef',
+    background: COLORS.ink,
+    color: COLORS.cream,
     textDecoration: 'none',
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
     fontSize: 12,
@@ -131,7 +132,7 @@ const s = {
 export default function AboutPage() {
   return (
     <Paper style={s.page}>
-      <PublicNav active="About" variant="barLight" />
+      <PublicNav active="About" variant="bar" />
 
       <div style={s.band}>
         <div style={s.bandLeft}>FOLIO 002 · ABOUT THE ARTIST</div>
@@ -237,7 +238,7 @@ export default function AboutPage() {
             All my links →
           </Link>
           <a href={`mailto:${CONTACT_EMAIL}`} style={{ ...s.btnDark, textDecoration: 'none' }}>
-            Get in touch <Icon name="arrow" size={14} color="#f6f4ef" />
+            Get in touch <Icon name="arrow" size={14} color={COLORS.cream} />
           </a>
         </div>
       </section>

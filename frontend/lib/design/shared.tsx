@@ -1,13 +1,14 @@
 'use client';
 
 import type { CSSProperties, ReactNode } from 'react';
+import { COLORS } from '@/lib/theme';
 
 export function Paper({ children, style }: { children: ReactNode; style?: CSSProperties }) {
   return (
     <div
       style={{
-        background: '#f2efe9',
-        color: '#1a1714',
+        background: COLORS.background,
+        color: COLORS.ink,
         fontFamily: '"Newsreader", Georgia, serif',
         ...style,
       }}
@@ -37,7 +38,7 @@ export function MarkText({ text }: { text: string }) {
   return <>{parts}</>;
 }
 
-export function Mascot({ size = 10, color = '#1a1714' }: { size?: number; color?: string }) {
+export function Mascot({ size = 10, color = COLORS.ink }: { size?: number; color?: string }) {
   return (
     <span
       style={{ display: 'inline-block', width: size, height: size, background: color, transform: 'rotate(45deg)' }}
@@ -174,7 +175,7 @@ export function PlaceholderImg({
       style={{
         width: '100%',
         aspectRatio: ratio,
-        background: '#e6e2d9',
+        background: COLORS.border,
         backgroundImage: 'repeating-linear-gradient(135deg, rgba(0,0,0,0.035) 0 2px, transparent 2px 11px)',
         overflow: 'hidden',
         position: 'relative',

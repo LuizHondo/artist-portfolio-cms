@@ -3,6 +3,7 @@ import { IBM_Plex_Sans } from "next/font/google";
 import ClickSpark from "@/components/ClickSpark";
 import { ScreensaverGate } from "@/components/ScreensaverGate";
 import { getArtworks } from "@/lib/api/artworks";
+import { COLORS } from "@/lib/theme";
 import "./globals.css";
 
 // Gambetta isn't in next/font/google's bundled font list (verified: build
@@ -43,7 +44,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="min-h-full flex flex-col">
-        <ClickSpark sparkColor="#fff" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
+        <ClickSpark sparkColor={COLORS.white} sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
           <ScreensaverGate slides={slides}>{children}</ScreensaverGate>
         </ClickSpark>
       </body>

@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { getFeatured } from '@/lib/api/artworks';
 import { CONTACT_EMAIL, enabledSocials } from '@/lib/social-links';
+import { COLORS } from '@/lib/theme';
 
 const footerStyles = {
-  wrap: { background: '#000', color: '#fff', containerType: 'inline-size', overflow: 'hidden', padding: '120px 0 0' },
+  wrap: { background: COLORS.black, color: COLORS.white, containerType: 'inline-size', overflow: 'hidden', padding: '120px 0 0' },
   top: {
     display: 'grid',
     gridTemplateColumns: 'minmax(0,1.15fr) minmax(0,1fr)',
@@ -27,7 +28,7 @@ const footerStyles = {
     fontSize: 'clamp(36px,5.4cqw,82px)',
     lineHeight: 0.94,
     letterSpacing: '-0.018em',
-    color: '#fff',
+    color: COLORS.white,
     textDecoration: 'none',
     margin: 0,
   },
@@ -78,7 +79,7 @@ const footerStyles = {
     width: '108cqw',
     marginLeft: '-4cqw',
     textAlign: 'center' as const,
-    color: '#fff',
+    color: COLORS.white,
   },
   legal: {
     display: 'flex',

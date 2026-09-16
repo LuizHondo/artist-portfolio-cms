@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
+/* Mirrors lib/theme.ts's COLORS for the few spots (plain CSS files) that
+   can't import the JS constant. Keep both in sync. */
 :root {
   --background: #f2efe9;
   --foreground: #1a1714;
+  --cream: #f6f4ef;
+  --ink-dark: #0a0805;
+  --media-black: #0c0c0e;
 }
 
 @theme inline {

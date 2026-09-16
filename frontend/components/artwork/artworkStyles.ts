@@ -1,8 +1,9 @@
 import type { CSSProperties } from 'react';
+import { COLORS } from '@/lib/theme';
 
 // Ported verbatim from the design canvas's project-v2.jsx style objects.
 export const projV2Styles: Record<string, CSSProperties> = {
-  page: { width: '100%', maxWidth: 1440, margin: '0 auto', color: '#1a1714', fontFamily: '"Newsreader", Georgia, serif' },
+  page: { width: '100%', maxWidth: 1440, margin: '0 auto', color: COLORS.ink, fontFamily: '"Newsreader", Georgia, serif' },
 
   back: {
     display: 'inline-flex',
@@ -42,7 +43,7 @@ export const projV2Styles: Record<string, CSSProperties> = {
     fontSize: 12,
     lineHeight: 1.9,
     fontWeight: 400,
-    color: '#3b3128',
+    color: COLORS.inkSoft,
   },
   metaRow: {
     display: 'grid',
@@ -62,7 +63,7 @@ export const projV2Styles: Record<string, CSSProperties> = {
     fontWeight: 600,
     marginTop: 18,
     textAlign: 'center',
-    color: '#3b3128',
+    color: COLORS.inkSoft,
     opacity: 0.6,
   },
 
@@ -88,8 +89,8 @@ export const projV2Styles: Record<string, CSSProperties> = {
   entryDesc: { fontSize: 18, lineHeight: 1.7, maxWidth: '62ch' },
   entryTextPad: { paddingTop: 18 },
 
-  finale: { background: '#1a1714', color: '#f6f4ef', textAlign: 'center', position: 'relative' },
-  finaleRule: { width: 60, height: 1, background: '#f6f4ef', margin: '0 auto 28px' },
+  finale: { background: COLORS.ink, color: COLORS.cream, textAlign: 'center', position: 'relative' },
+  finaleRule: { width: 60, height: 1, background: COLORS.cream, margin: '0 auto 28px' },
   finaleSmall: {
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
     fontSize: 11,
@@ -119,7 +120,7 @@ export const projV2Styles: Record<string, CSSProperties> = {
   relCard: { cursor: 'pointer', textDecoration: 'none', color: 'inherit', display: 'block' },
   relCap: { fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif', fontSize: 17, fontWeight: 400, marginTop: 10 },
 
-  contact: { background: '#ffffff', padding: 36, border: '1px solid rgba(26,23,20,0.2)' },
+  contact: { background: COLORS.white, padding: 36, border: '1px solid rgba(26,23,20,0.2)' },
   contactNote: {
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
     fontSize: 11,
@@ -137,7 +138,7 @@ export const projV2Styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     gap: 12,
     padding: '14px 24px',
-    color: '#f6f4ef',
+    color: COLORS.cream,
     border: 'none',
     cursor: 'pointer',
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',

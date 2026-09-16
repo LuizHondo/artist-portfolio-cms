@@ -1,11 +1,9 @@
 import Link from 'next/link';
+import { COLORS } from '@/lib/theme';
 
 // Shared Home / Artworks / About nav, matching home-v1.jsx's NavV1 link set
-// and active-state logic. Each live page (home-v1, project-v2, about) styles
-// its own nav bar differently in the source design — home's floats
-// transparent over the hero, project/about render a static bordered bar —
-// so this component is parameterized by `variant` to reproduce each
-// pixel-for-pixel instead of forcing one look onto all three.
+// and active-state logic. Home floats transparent over the hero (`hero`);
+// every other page uses the artwork pages' static bordered bar (`bar`).
 const links = [
   { label: 'Artworks', href: '/artworks' },
   { label: 'About', href: '/about' },
@@ -53,11 +51,11 @@ const variants = {
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: '24px 56px',
-      color: '#f6f4ef',
+      color: COLORS.cream,
     },
     link: { cursor: 'pointer', opacity: 0.85, textDecoration: 'none', color: 'inherit' },
     linkActive: {
-      color: '#fff',
+      color: COLORS.white,
       borderBottom: '1px solid rgba(255,255,255,0.7)',
       paddingBottom: 3,
       opacity: 1,
@@ -71,27 +69,14 @@ const variants = {
       justifyContent: 'space-between',
       padding: '24px 64px',
       borderBottom: '1px solid rgba(26,23,20,0.25)',
-      color: '#1a1714',
+      color: COLORS.ink,
     },
     link: { cursor: 'pointer', textDecoration: 'none', color: 'inherit' },
-    linkActive: { color: '#c4442a' },
-  },
-  // about.jsx: static bordered bar, slightly lighter border
-  barLight: {
-    nav: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '20px 56px',
-      borderBottom: '1px solid rgba(26,23,20,0.12)',
-      color: '#1a1714',
-    },
-    link: { cursor: 'pointer', opacity: 0.85, textDecoration: 'none', color: 'inherit' },
-    linkActive: { color: '#c4442a', borderBottom: '1px solid #c4442a', paddingBottom: 2, opacity: 1 },
+    linkActive: { color: COLORS.accent },
   },
 };
 
-export function PublicNav({ active, variant, locked = false }: { active: Active; variant: keyof typeof variants; locked?: boolean }) {
+export function PublicNav({ active, variant, locked = false }: { active?: Active; variant: keyof typeof variants; locked?: boolean }) {
   const v = variants[variant];
   return (
     <nav style={{ ...v.nav, opacity: locked ? 0 : 1, pointerEvents: locked ? 'none' : 'auto', transition: 'opacity .8s' }} aria-hidden={locked}>

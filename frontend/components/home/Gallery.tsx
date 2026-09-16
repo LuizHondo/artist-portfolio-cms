@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Icon, PlaceholderImg } from '@/lib/design/shared';
+import { COLORS } from '@/lib/theme';
 import { useIsMobile } from '@/lib/useIsMobile';
 import type { Artwork } from '@/lib/types';
 import { homeV1Styles as s } from './homeStyles';
@@ -70,7 +71,7 @@ export function Gallery({ artworks }: { artworks: Artwork[] }) {
               <Link key={a.id} href={`/artwork/${a.slug}`} style={s.card} className="gallery-card">
                 <PlaceholderImg src={a.coverImage} ratio="4/3" />
                 <div className="gallery-overlay" style={s.cardOverlay}>
-                  <h3 style={{ ...s.cardTitle, fontSize: 26, color: '#f6f4ef' }}>{a.title}</h3>
+                  <h3 style={{ ...s.cardTitle, fontSize: 26, color: COLORS.cream }}>{a.title}</h3>
                   <div style={s.cardOverlayMeta}>{a.yearCreated} · {a.medium}</div>
                   <p style={s.cardOverlaySummary}>{a.summary}</p>
                 </div>
@@ -91,7 +92,7 @@ export function Gallery({ artworks }: { artworks: Artwork[] }) {
               <Link key={a.id} href={`/artwork/${a.slug}`} style={s.card} className="gallery-card">
                 <PlaceholderImg src={a.coverImage} ratio="1/1" />
                 <div className="gallery-overlay" style={s.cardOverlay}>
-                  <h3 style={{ ...s.cardTitle, fontSize: 18, color: '#f6f4ef' }}>{a.title}</h3>
+                  <h3 style={{ ...s.cardTitle, fontSize: 18, color: COLORS.cream }}>{a.title}</h3>
                   <div style={s.cardOverlayMeta}>{a.yearCreated} · {a.medium}</div>
                 </div>
               </Link>
@@ -117,7 +118,7 @@ export function Gallery({ artworks }: { artworks: Artwork[] }) {
                 <Link key={a.id} href={`/artwork/${a.slug}`} style={{ ...s.card, ...s.railItem }} className="gallery-card">
                   <PlaceholderImg src={a.coverImage} ratio="3/4" />
                   <div className="gallery-overlay" style={{ ...s.cardOverlay, alignItems: 'center', textAlign: 'center' }}>
-                    <h3 style={{ ...s.cardTitle, fontSize: 15, color: '#f6f4ef' }}>{a.title}</h3>
+                    <h3 style={{ ...s.cardTitle, fontSize: 15, color: COLORS.cream }}>{a.title}</h3>
                     <div style={s.cardOverlayMeta}>{a.yearCreated}</div>
                   </div>
                 </Link>
