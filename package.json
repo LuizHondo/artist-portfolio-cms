@@ -10,7 +10,8 @@
     "start": "node dist/app.js",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx src/database/seed.ts",
-    "db:reset": "prisma migrate reset"
+    "db:reset": "prisma migrate reset",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest"
   },
   "keywords": [
     "portfolio",
@@ -35,10 +36,13 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.21",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/multer": "^1.4.11",
     "@types/node": "^20.10.6",
+    "jest": "^30.5.1",
     "prisma": "^5.20.0",
+    "ts-jest": "^29.4.12",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   },
