@@ -179,20 +179,37 @@ export const homeV1Styles: Record<string, CSSProperties> = {
   filterActive: { background: '#1a1714', color: '#f6f4ef', border: '1px solid #1a1714' },
 
   card: { position: 'relative', cursor: 'pointer', overflow: 'hidden', display: 'block', textDecoration: 'none', color: 'inherit' },
-  cardCaption: { paddingTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' },
-  cardTitle: {
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
-    margin: 0,
-    fontWeight: 600,
-    letterSpacing: '-0.01em',
+  cardOverlay: {
+    position: 'absolute',
+    inset: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    gap: 4,
+    padding: '16px',
+    background: 'linear-gradient(to top, rgba(10,8,5,0.78) 0%, rgba(10,8,5,0.35) 55%, transparent 100%)',
+    color: '#f6f4ef',
   },
-  cardMeta: {
+  cardOverlayMeta: {
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
     fontSize: 10,
     letterSpacing: '0.16em',
     textTransform: 'uppercase',
     fontWeight: 600,
-    opacity: 0.5,
+    opacity: 0.75,
+  },
+  cardOverlaySummary: {
+    fontFamily: '"Newsreader", Georgia, serif',
+    fontSize: 15,
+    lineHeight: 1.5,
+    opacity: 0.92,
+    maxWidth: '46ch',
+  },
+  cardTitle: {
+    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    margin: 0,
+    fontWeight: 600,
+    letterSpacing: '-0.01em',
   },
 
   railWrap: { position: 'relative', display: 'flex', alignItems: 'center' },
@@ -304,21 +321,5 @@ export const homeV1Styles: Record<string, CSSProperties> = {
   tier1Grid: { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0,1fr))', gap: 28, marginBottom: 80 },
   tier2Grid: { display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0,1fr))', gap: 20, marginBottom: 80 },
   tier3Grid: { display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0,1fr))', gap: 16 },
-  cardSummary: {
-    fontFamily: '"Newsreader", Georgia, serif',
-    fontSize: 16,
-    lineHeight: 1.55,
-    opacity: 0.72,
-    marginTop: 10,
-    maxWidth: '46ch',
-  },
-  cardRule: {
-    fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
-    fontSize: 11,
-    letterSpacing: '0.16em',
-    textTransform: 'uppercase',
-    opacity: 0.5,
-    marginTop: 6,
-  },
   empty: { opacity: 0.5, padding: '24px 0' },
 };

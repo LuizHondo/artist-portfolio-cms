@@ -67,14 +67,13 @@ export function Gallery({ artworks }: { artworks: Artwork[] }) {
           </div>
           <div style={{ ...s.tier1Grid, ...(isMobile ? { gridTemplateColumns: '1fr', gap: 36 } : {}) }}>
             {t1.map((a) => (
-              <Link key={a.id} href={`/artwork/${a.slug}`} style={s.card}>
+              <Link key={a.id} href={`/artwork/${a.slug}`} style={s.card} className="gallery-card">
                 <PlaceholderImg src={a.coverImage} ratio="4/3" />
-                <div style={s.cardCaption}>
-                  <h3 style={{ ...s.cardTitle, fontSize: 30 }}>{a.title}</h3>
-                  <div style={s.cardMeta}>{a.yearCreated}</div>
+                <div className="gallery-overlay" style={s.cardOverlay}>
+                  <h3 style={{ ...s.cardTitle, fontSize: 26, color: '#f6f4ef' }}>{a.title}</h3>
+                  <div style={s.cardOverlayMeta}>{a.yearCreated} · {a.medium}</div>
+                  <p style={s.cardOverlaySummary}>{a.summary}</p>
                 </div>
-                <p style={s.cardSummary}>{a.summary}</p>
-                <div style={s.cardRule}>{a.medium}</div>
               </Link>
             ))}
           </div>
@@ -89,13 +88,12 @@ export function Gallery({ artworks }: { artworks: Artwork[] }) {
           </div>
           <div style={{ ...s.tier2Grid, ...(isMobile ? { gridTemplateColumns: '1fr', gap: 24 } : {}) }}>
             {t2.map((a) => (
-              <Link key={a.id} href={`/artwork/${a.slug}`} style={s.card}>
+              <Link key={a.id} href={`/artwork/${a.slug}`} style={s.card} className="gallery-card">
                 <PlaceholderImg src={a.coverImage} ratio="1/1" />
-                <div style={s.cardCaption}>
-                  <h3 style={{ ...s.cardTitle, fontSize: 20 }}>{a.title}</h3>
-                  <div style={s.cardMeta}>{a.yearCreated}</div>
+                <div className="gallery-overlay" style={s.cardOverlay}>
+                  <h3 style={{ ...s.cardTitle, fontSize: 18, color: '#f6f4ef' }}>{a.title}</h3>
+                  <div style={s.cardOverlayMeta}>{a.yearCreated} · {a.medium}</div>
                 </div>
-                <div style={s.cardRule}>{a.medium}</div>
               </Link>
             ))}
           </div>
@@ -116,12 +114,12 @@ export function Gallery({ artworks }: { artworks: Artwork[] }) {
             )}
             <div ref={railRef} className="archive-rail" style={s.rail}>
               {t3.slice(0, 10).map((a) => (
-                <Link key={a.id} href={`/artwork/${a.slug}`} style={{ ...s.card, ...s.railItem }}>
+                <Link key={a.id} href={`/artwork/${a.slug}`} style={{ ...s.card, ...s.railItem }} className="gallery-card">
                   <PlaceholderImg src={a.coverImage} ratio="3/4" />
-                  <div style={{ ...s.cardCaption, justifyContent: 'center' }}>
-                    <h3 style={{ ...s.cardTitle, fontSize: 15 }}>{a.title}</h3>
+                  <div className="gallery-overlay" style={{ ...s.cardOverlay, alignItems: 'center', textAlign: 'center' }}>
+                    <h3 style={{ ...s.cardTitle, fontSize: 15, color: '#f6f4ef' }}>{a.title}</h3>
+                    <div style={s.cardOverlayMeta}>{a.yearCreated}</div>
                   </div>
-                  <div style={{ ...s.cardMeta, marginTop: 2, textAlign: 'center' }}>{a.yearCreated}</div>
                 </Link>
               ))}
             </div>
