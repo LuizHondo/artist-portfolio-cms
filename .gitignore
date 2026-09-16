@@ -33,6 +33,9 @@ dev.db
 # Local Claude settings
 .claude/settings.local.json
 
+# Scratch notes
+TODO
+
 # Uploads
 uploads/
 public/uploads/
