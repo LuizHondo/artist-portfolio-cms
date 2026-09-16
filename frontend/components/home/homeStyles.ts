@@ -137,7 +137,7 @@ export const homeV1Styles: Record<string, CSSProperties> = {
   },
   heroDotActive: { height: 24, background: '#f6f4ef', borderRadius: 3 },
 
-  section: { padding: '96px 56px' },
+  section: { padding: '56px 56px' },
   sectionHead: {
     display: 'flex',
     alignItems: 'baseline',

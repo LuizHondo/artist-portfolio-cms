@@ -8,7 +8,7 @@ import Link from 'next/link';
 // pixel-for-pixel instead of forcing one look onto all three.
 const links = [
   { label: 'Home', href: '/' },
-  { label: 'Artworks', href: '/#gallery' },
+  { label: 'Artworks', href: '/artworks' },
   { label: 'About', href: '/about' },
 ] as const;
 

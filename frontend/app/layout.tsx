@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans } from "next/font/google";
 import ClickSpark from "@/components/ClickSpark";
+import { ScreensaverGate } from "@/components/ScreensaverGate";
+import { getArtworks } from "@/lib/api/artworks";
 import "./globals.css";
 
 // Gambetta isn't in next/font/google's bundled font list (verified: build
@@ -19,7 +21,17 @@ export const metadata: Metadata = {
   description: "Portfolio of Raul Barbosa Neto — illustration, character design, and concept art.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const artworks = await getArtworks();
+
+  // Same slide selection as the entry gate always used: priority-1 artworks,
+  // then priority-2, in the createdAt-desc order the backend already returns.
+  const slides = artworks
+    .filter((a) => a.featuredPriority === 1 || a.featuredPriority === 2)
+    .sort((a, b) => a.featuredPriority - b.featuredPriority)
+    .map((a) => a.coverImage)
+    .slice(0, 5);
+
   return (
     <html lang="en" className={`${ibmPlexSans.variable} h-full antialiased`}>
       <head>
@@ -32,7 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full flex flex-col">
         <ClickSpark sparkColor="#fff" sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
-          {children}
+          <ScreensaverGate slides={slides}>{children}</ScreensaverGate>
         </ClickSpark>
       </body>
     </html>
