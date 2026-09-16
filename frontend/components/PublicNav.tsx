@@ -7,7 +7,6 @@ import Link from 'next/link';
 // so this component is parameterized by `variant` to reproduce each
 // pixel-for-pixel instead of forcing one look onto all three.
 const links = [
-  { label: 'Home', href: '/' },
   { label: 'Artworks', href: '/artworks' },
   { label: 'About', href: '/about' },
 ] as const;
@@ -96,7 +95,7 @@ export function PublicNav({ active, variant, locked = false }: { active: Active;
   const v = variants[variant];
   return (
     <nav style={{ ...v.nav, opacity: locked ? 0 : 1, pointerEvents: locked ? 'none' : 'auto', transition: 'opacity .8s' }} aria-hidden={locked}>
-      <Link href="/" style={logoWrap} tabIndex={locked ? -1 : undefined}>
+      <Link href="/artworks" style={logoWrap} tabIndex={locked ? -1 : undefined}>
         <span style={logoScript}>Raul Barbosa</span>Illustrator &amp; Animator
       </Link>
       <div style={navLinksRow}>
