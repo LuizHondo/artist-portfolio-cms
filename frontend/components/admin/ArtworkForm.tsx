@@ -17,6 +17,19 @@ const deleteBtnClass =
 
 const emptyImage: ArtworkEntryImage = { url: '', title: '', description: '' };
 
+const MEDIUM_OPTIONS = [
+  'Illustration',
+  'Animation',
+  '3D Modelling',
+  'Painting',
+  'Drawing',
+  'Photography',
+  'Sculpture',
+  'Digital Art',
+  'Mixed Media',
+  'Other',
+];
+
 function resizeImages(images: ArtworkEntryImage[], columns: number): ArtworkEntryImage[] {
   if (columns <= images.length) return images.slice(0, columns);
   return [...images, ...Array.from({ length: columns - images.length }, () => ({ ...emptyImage }))];
@@ -219,7 +232,16 @@ function ArtworkFormContent({ slug }: { slug?: string }) {
             <label htmlFor="medium" className="block mb-2 font-medium text-[#333]">
               Medium
             </label>
-            <input type="text" id="medium" name="medium" value={formData.medium} onChange={handleFormChange} required className={inputClass} />
+            <select id="medium" name="medium" value={formData.medium} onChange={handleFormChange} required className={inputClass}>
+              <option value="" disabled>
+                Select a medium
+              </option>
+              {MEDIUM_OPTIONS.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="mb-6">
