@@ -1,6 +1,23 @@
 import { Request, Response } from 'express';
 import ArtworkService from './artwork.service.js';
-import { CreateArtworkSchema, UpdateArtworkSchema, ArtworkEntrySchema } from '../../shared/schemas.js';
+import { CreateArtworkSchema, UpdateArtworkSchema, ArtworkEntrySchema, UpdateArtworkEntrySchema, ArtworkEntryImageSchema } from '../../shared/schemas.js';
+import { z } from 'zod';
+
+const PositionParamSchema = z.coerce.number().int().min(1).max(5);
+
+function handlePrismaError(error: unknown, res: Response, fallbackMessage: string) {
+  const code = (error as { code?: string })?.code;
+  if (code === 'P2025') {
+    return res.status(404).json({ error: 'Not found' });
+  }
+  if (code === 'P2002') {
+    return res.status(409).json({ error: 'Conflict' });
+  }
+  if (error instanceof Error) {
+    return res.status(400).json({ error: error.message });
+  }
+  return res.status(500).json({ error: fallbackMessage });
+}
 
 export class ArtworkController {
   // GET /api/artworks - List all artworks (with optional tag filter)
@@ -131,7 +148,7 @@ export class ArtworkController {
   async updateEntry(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const validated = ArtworkEntrySchema.partial().parse(req.body);
+      const validated = UpdateArtworkEntrySchema.parse(req.body);
       const entry = await ArtworkService.updateEntry(id, validated);
 
       res.json({
@@ -161,6 +178,65 @@ export class ArtworkController {
         return res.status(400).json({ error: error.message });
       }
       res.status(500).json({ error: 'Failed to delete entry' });
+    }
+  }
+  // GET /api/admin/entries/:entryId/images - List an entry's images (admin only)
+  async listImages(req: Request, res: Response) {
+    try {
+      const { entryId } = req.params;
+      const images = await ArtworkService.listImages(entryId);
+      res.json({ success: true, data: images });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch images' });
+    }
+  }
+
+  // GET /api/admin/entries/:entryId/images/:position - Get one image (admin only)
+  async getImage(req: Request, res: Response) {
+    try {
+      const { entryId } = req.params;
+      const position = PositionParamSchema.parse(req.params.position);
+      const image = await ArtworkService.getImage(entryId, position);
+      res.json({ success: true, data: image });
+    } catch (error) {
+      handlePrismaError(error, res, 'Failed to fetch image');
+    }
+  }
+
+  // POST /api/admin/entries/:entryId/images - Add an image (admin only)
+  async createImage(req: Request, res: Response) {
+    try {
+      const { entryId } = req.params;
+      const validated = ArtworkEntryImageSchema.parse(req.body);
+      const image = await ArtworkService.createImage(entryId, validated);
+      res.status(201).json({ success: true, data: image });
+    } catch (error) {
+      handlePrismaError(error, res, 'Failed to create image');
+    }
+  }
+
+  // PATCH /api/admin/entries/:entryId/images/:position - Update an image (admin only)
+  async updateImage(req: Request, res: Response) {
+    try {
+      const { entryId } = req.params;
+      const position = PositionParamSchema.parse(req.params.position);
+      const validated = ArtworkEntryImageSchema.partial().parse(req.body);
+      const image = await ArtworkService.updateImage(entryId, position, validated);
+      res.json({ success: true, data: image });
+    } catch (error) {
+      handlePrismaError(error, res, 'Failed to update image');
+    }
+  }
+
+  // DELETE /api/admin/entries/:entryId/images/:position - Delete an image, renumbering the rest (admin only)
+  async deleteImage(req: Request, res: Response) {
+    try {
+      const { entryId } = req.params;
+      const position = PositionParamSchema.parse(req.params.position);
+      await ArtworkService.deleteImage(entryId, position);
+      res.json({ success: true, message: 'Image deleted successfully' });
+    } catch (error) {
+      handlePrismaError(error, res, 'Failed to delete image');
     }
   }
 }

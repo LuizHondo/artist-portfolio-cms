@@ -152,10 +152,10 @@ async function main() {
     await prisma.artworkEntry.create({
       data: {
         artworkId: createdArtwork.id,
-        title: 'Featured image',
-        imageUrl: createdArtwork.coverImage,
-        description: createdArtwork.summary,
-        size: artwork.featuredPriority === 1 ? 'large' : 'medium',
+        columns: 1,
+        images: {
+          create: [{ position: 1, title: 'Featured image', url: createdArtwork.coverImage, description: createdArtwork.summary }],
+        },
         displayOrder: 1,
       },
     });

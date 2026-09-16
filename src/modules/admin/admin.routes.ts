@@ -21,4 +21,11 @@ router.post('/artworks/:id/entries', authMiddleware, AdminController.createEntry
 router.put('/entries/:id', authMiddleware, AdminController.updateEntry);
 router.delete('/entries/:id', authMiddleware, AdminController.deleteEntry);
 
+// Per-image management (admin only)
+router.get('/entries/:entryId/images', authMiddleware, AdminController.listImages);
+router.post('/entries/:entryId/images', authMiddleware, AdminController.createImage);
+router.get('/entries/:entryId/images/:position', authMiddleware, AdminController.getImage);
+router.patch('/entries/:entryId/images/:position', authMiddleware, AdminController.updateImage);
+router.delete('/entries/:entryId/images/:position', authMiddleware, AdminController.deleteImage);
+
 export default router;

@@ -1,5 +1,5 @@
 import prisma from '../../database/client.js';
-import { CreateArtworkInput, UpdateArtworkInput, ArtworkEntryInput } from '../../shared/schemas.js';
+import { CreateArtworkInput, UpdateArtworkInput, ArtworkEntryInput, UpdateArtworkEntryInput } from '../../shared/schemas.js';
 import { Artwork, ArtworkEntry } from '@prisma/client';
 
 export class ArtworkService {
@@ -22,6 +22,7 @@ export class ArtworkService {
       include: {
         entries: {
           orderBy: { displayOrder: 'asc' },
+          include: { images: { orderBy: { position: 'asc' } } },
         },
         artworkTags: {
           include: {
@@ -44,6 +45,7 @@ export class ArtworkService {
       include: {
         entries: {
           orderBy: { displayOrder: 'asc' },
+          include: { images: { orderBy: { position: 'asc' } } },
         },
         artworkTags: {
           include: {
@@ -62,6 +64,7 @@ export class ArtworkService {
       include: {
         entries: {
           orderBy: { displayOrder: 'asc' },
+          include: { images: { orderBy: { position: 'asc' } } },
         },
         artworkTags: {
           include: {
@@ -98,7 +101,7 @@ export class ArtworkService {
         },
       },
       include: {
-        entries: true,
+        entries: { include: { images: { orderBy: { position: 'asc' } } } },
         artworkTags: {
           include: { tag: true },
         },
@@ -146,7 +149,7 @@ export class ArtworkService {
             : undefined,
       },
       include: {
-        entries: true,
+        entries: { include: { images: { orderBy: { position: 'asc' } } } },
         artworkTags: {
           include: { tag: true },
         },
@@ -176,25 +179,39 @@ export class ArtworkService {
     return prisma.artworkEntry.create({
       data: {
         artworkId,
-        title: data.title,
-        description: data.description,
-        imageUrl: data.imageUrl,
-        size: data.size,
+        columns: data.columns,
         displayOrder: data.displayOrder,
+        images: {
+          create: data.images.map((image, index) => ({ ...image, position: index + 1 })),
+        },
       },
+      include: { images: { orderBy: { position: 'asc' } } },
     });
   }
 
   // Update process entry
-  async updateEntry(id: string, data: Partial<ArtworkEntryInput>) {
+  async updateEntry(id: string, data: UpdateArtworkEntryInput) {
     const entry = await prisma.artworkEntry.findUnique({ where: { id } });
     if (!entry) {
       throw new Error('Entry not found');
     }
 
-    return prisma.artworkEntry.update({
-      where: { id },
-      data,
+    return prisma.$transaction(async (tx) => {
+      if (data.images) {
+        await tx.artworkEntryImage.deleteMany({ where: { entryId: id } });
+      }
+
+      return tx.artworkEntry.update({
+        where: { id },
+        data: {
+          columns: data.columns,
+          displayOrder: data.displayOrder,
+          images: data.images
+            ? { create: data.images.map((image, index) => ({ ...image, position: index + 1 })) }
+            : undefined,
+        },
+        include: { images: { orderBy: { position: 'asc' } } },
+      });
     });
   }
 
@@ -207,6 +224,54 @@ export class ArtworkService {
 
     return prisma.artworkEntry.delete({
       where: { id },
+    });
+  }
+
+  // List an entry's images ordered by position
+  async listImages(entryId: string) {
+    return prisma.artworkEntryImage.findMany({ where: { entryId }, orderBy: { position: 'asc' } });
+  }
+
+  // Get one image by entry + position
+  async getImage(entryId: string, position: number) {
+    return prisma.artworkEntryImage.findUniqueOrThrow({ where: { entryId_position: { entryId, position } } });
+  }
+
+  // Add an image at the next available position
+  async createImage(entryId: string, data: { url: string; title: string; description: string }) {
+    const entry = await prisma.artworkEntry.findUnique({ where: { id: entryId } });
+    if (!entry) {
+      throw new Error('Entry not found');
+    }
+
+    const last = await prisma.artworkEntryImage.findFirst({ where: { entryId }, orderBy: { position: 'desc' } });
+
+    return prisma.artworkEntryImage.create({
+      data: { ...data, entryId, position: (last?.position ?? 0) + 1 },
+    });
+  }
+
+  // Update one image's fields by entry + position
+  async updateImage(entryId: string, position: number, data: Partial<{ url: string; title: string; description: string }>) {
+    return prisma.artworkEntryImage.update({
+      where: { entryId_position: { entryId, position } },
+      data,
+    });
+  }
+
+  // Delete one image and renumber later positions to stay contiguous
+  async deleteImage(entryId: string, position: number) {
+    return prisma.$transaction(async (tx) => {
+      await tx.artworkEntryImage.delete({ where: { entryId_position: { entryId, position } } });
+
+      const rest = await tx.artworkEntryImage.findMany({
+        where: { entryId, position: { gt: position } },
+        orderBy: { position: 'asc' },
+      });
+
+      for (const image of rest) {
+        await tx.artworkEntryImage.update({ where: { id: image.id }, data: { position: image.position - 1 } });
+      }
     });
   }
 

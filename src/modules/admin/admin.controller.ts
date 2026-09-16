@@ -53,6 +53,31 @@ export class AdminController {
     return ArtworkController.deleteEntry(req, res);
   }
 
+  // GET /api/admin/entries/:entryId/images - List entry images
+  async listImages(req: Request, res: Response) {
+    return ArtworkController.listImages(req, res);
+  }
+
+  // GET /api/admin/entries/:entryId/images/:position - Get one entry image
+  async getImage(req: Request, res: Response) {
+    return ArtworkController.getImage(req, res);
+  }
+
+  // POST /api/admin/entries/:entryId/images - Add an entry image
+  async createImage(req: Request, res: Response) {
+    return ArtworkController.createImage(req, res);
+  }
+
+  // PATCH /api/admin/entries/:entryId/images/:position - Update an entry image
+  async updateImage(req: Request, res: Response) {
+    return ArtworkController.updateImage(req, res);
+  }
+
+  // DELETE /api/admin/entries/:entryId/images/:position - Delete an entry image
+  async deleteImage(req: Request, res: Response) {
+    return ArtworkController.deleteImage(req, res);
+  }
+
   // POST /api/admin/change-password - Change password
   async changePassword(req: Request, res: Response) {
     try {
