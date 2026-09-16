@@ -1,9 +1,13 @@
+export interface ArtworkEntryImage {
+  url: string;
+  title: string;
+  description: string;
+}
+
 export interface ArtworkEntry {
   id: string;
-  title: string;
-  imageUrl: string;
-  description: string;
-  size: 'small' | 'medium' | 'large';
+  columns: number;
+  images: ArtworkEntryImage[];
   displayOrder: number;
 }
 

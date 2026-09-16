@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { getBySlug } from '@/lib/api/artworks';
 import { getTags } from '@/lib/api/tags';
 import { adminArtworksApi } from '@/lib/api/admin-artworks';
-import type { ArtworkEntry, Tag } from '@/lib/types';
+import type { ArtworkEntry, ArtworkEntryImage, Tag } from '@/lib/types';
 import { AdminGuard } from '@/components/admin/AdminGuard';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 
@@ -15,14 +15,15 @@ const inputClass =
 const deleteBtnClass =
   'px-[0.8rem] py-[0.4rem] border-0 rounded cursor-pointer text-[0.9rem] transition-all duration-300 bg-[#dc3545] text-white hover:bg-[#c82333]';
 
+const emptyImage: ArtworkEntryImage = { url: '', title: '', description: '' };
+
+function resizeImages(images: ArtworkEntryImage[], columns: number): ArtworkEntryImage[] {
+  if (columns <= images.length) return images.slice(0, columns);
+  return [...images, ...Array.from({ length: columns - images.length }, () => ({ ...emptyImage }))];
+}
+
 function entryFieldsChanged(a: Partial<ArtworkEntry>, b: Partial<ArtworkEntry>) {
-  return (
-    a.title !== b.title ||
-    a.description !== b.description ||
-    a.imageUrl !== b.imageUrl ||
-    a.size !== b.size ||
-    a.displayOrder !== b.displayOrder
-  );
+  return a.columns !== b.columns || JSON.stringify(a.images) !== JSON.stringify(b.images) || a.displayOrder !== b.displayOrder;
 }
 
 function ArtworkFormContent({ slug }: { slug?: string }) {
@@ -46,13 +47,11 @@ function ArtworkFormContent({ slug }: { slug?: string }) {
 
   const [entries, setEntries] = useState<Partial<ArtworkEntry>[]>([]);
   const [originalEntries, setOriginalEntries] = useState<Partial<ArtworkEntry>[]>([]);
-  const [newEntry, setNewEntry] = useState<{
-    title: string;
-    description: string;
-    imageUrl: string;
-    size: '' | 'small' | 'medium' | 'large';
-    displayOrder: number;
-  }>({ title: '', description: '', imageUrl: '', size: '', displayOrder: 1 });
+  const [newEntry, setNewEntry] = useState<{ columns: number; images: ArtworkEntryImage[]; displayOrder: number }>({
+    columns: 1,
+    images: [{ ...emptyImage }],
+    displayOrder: 1,
+  });
 
   useEffect(() => {
     (async () => {
@@ -103,10 +102,12 @@ function ArtworkFormContent({ slug }: { slug?: string }) {
     });
   };
 
+  const newEntryComplete = newEntry.images.every((img) => img.url && img.title && img.description);
+
   const handleAddEntry = () => {
-    if (newEntry.title && newEntry.imageUrl && newEntry.description && newEntry.size) {
-      setEntries([...entries, { ...newEntry, size: newEntry.size as ArtworkEntry['size'], displayOrder: entries.length + 1 }]);
-      setNewEntry({ title: '', description: '', imageUrl: '', size: '', displayOrder: 1 });
+    if (newEntryComplete) {
+      setEntries([...entries, { ...newEntry, displayOrder: entries.length + 1 }]);
+      setNewEntry({ columns: 1, images: [{ ...emptyImage }], displayOrder: 1 });
     }
   };
 
@@ -114,8 +115,20 @@ function ArtworkFormContent({ slug }: { slug?: string }) {
     setEntries(entries.filter((_, i) => i !== index));
   };
 
-  const handleEntryFieldChange = (index: number, field: 'title' | 'description' | 'imageUrl' | 'size', value: string) => {
-    setEntries(entries.map((entry, i) => (i === index ? { ...entry, [field]: value } : entry)));
+  const handleEntryColumnsChange = (index: number, columns: number) => {
+    setEntries(
+      entries.map((entry, i) => (i === index ? { ...entry, columns, images: resizeImages(entry.images ?? [], columns) } : entry))
+    );
+  };
+
+  const handleEntryImageFieldChange = (index: number, imageIndex: number, field: keyof ArtworkEntryImage, value: string) => {
+    setEntries(
+      entries.map((entry, i) =>
+        i === index
+          ? { ...entry, images: (entry.images ?? []).map((img, j) => (j === imageIndex ? { ...img, [field]: value } : img)) }
+          : entry
+      )
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -289,50 +302,55 @@ function ArtworkFormContent({ slug }: { slug?: string }) {
                   </div>
 
                   <div className="mb-4">
-                    <label className="block mb-2 font-medium text-[#333]">Entry Title</label>
-                    <input
-                      type="text"
-                      value={entry.title ?? ''}
-                      onChange={(e) => handleEntryFieldChange(index, 'title', e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block mb-2 font-medium text-[#333]">Entry Image URL</label>
-                    <input
-                      type="url"
-                      value={entry.imageUrl ?? ''}
-                      onChange={(e) => handleEntryFieldChange(index, 'imageUrl', e.target.value)}
-                      className={inputClass}
-                    />
-                  </div>
-
-                  <div className="mb-4">
-                    <label className="block mb-2 font-medium text-[#333]">Entry Description</label>
-                    <textarea
-                      value={entry.description ?? ''}
-                      onChange={(e) => handleEntryFieldChange(index, 'description', e.target.value)}
-                      className={`${inputClass} resize-y min-h-[80px]`}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block mb-2 font-medium text-[#333]">Entry Size</label>
+                    <label className="block mb-2 font-medium text-[#333]">Columns</label>
                     <select
-                      value={entry.size ?? ''}
-                      onChange={(e) => handleEntryFieldChange(index, 'size', e.target.value)}
+                      value={entry.columns ?? 1}
+                      onChange={(e) => handleEntryColumnsChange(index, parseInt(e.target.value))}
                       className={inputClass}
                       required
                     >
-                      <option value="" disabled>
-                        Select size…
-                      </option>
-                      <option value="small">Small</option>
-                      <option value="medium">Medium</option>
-                      <option value="large">Large</option>
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
                     </select>
                   </div>
+
+                  {(entry.images ?? []).map((image, imageIndex) => (
+                    <div key={imageIndex} style={{ borderTop: imageIndex > 0 ? '1px dashed #ddd' : undefined, paddingTop: imageIndex > 0 ? '1rem' : 0, marginTop: imageIndex > 0 ? '1rem' : 0 }}>
+                      <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Image {imageIndex + 1}</p>
+
+                      <div className="mb-4">
+                        <label className="block mb-2 font-medium text-[#333]">Image URL</label>
+                        <input
+                          type="url"
+                          value={image.url}
+                          onChange={(e) => handleEntryImageFieldChange(index, imageIndex, 'url', e.target.value)}
+                          className={inputClass}
+                        />
+                      </div>
+
+                      <div className="mb-4">
+                        <label className="block mb-2 font-medium text-[#333]">Image Title</label>
+                        <input
+                          type="text"
+                          value={image.title}
+                          onChange={(e) => handleEntryImageFieldChange(index, imageIndex, 'title', e.target.value)}
+                          className={inputClass}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block mb-2 font-medium text-[#333]">Image Description</label>
+                        <textarea
+                          value={image.description}
+                          onChange={(e) => handleEntryImageFieldChange(index, imageIndex, 'description', e.target.value)}
+                          className={`${inputClass} resize-y min-h-[80px]`}
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
@@ -342,64 +360,85 @@ function ArtworkFormContent({ slug }: { slug?: string }) {
             <h4 style={{ marginTop: 0 }}>Add New Entry</h4>
 
             <div className="mb-6">
-              <label htmlFor="entry-title" className="block mb-2 font-medium text-[#333]">
-                Entry Title
-              </label>
-              <input
-                type="text"
-                id="entry-title"
-                value={newEntry.title}
-                onChange={(e) => setNewEntry({ ...newEntry, title: e.target.value })}
-                className={inputClass}
-              />
-            </div>
-
-            <div className="mb-6">
-              <label htmlFor="entry-image" className="block mb-2 font-medium text-[#333]">
-                Entry Image URL
-              </label>
-              <input
-                type="url"
-                id="entry-image"
-                value={newEntry.imageUrl}
-                onChange={(e) => setNewEntry({ ...newEntry, imageUrl: e.target.value })}
-                className={inputClass}
-              />
-            </div>
-
-            <div className="mb-6">
-              <label htmlFor="entry-description" className="block mb-2 font-medium text-[#333]">
-                Entry Description
-              </label>
-              <textarea
-                id="entry-description"
-                value={newEntry.description}
-                onChange={(e) => setNewEntry({ ...newEntry, description: e.target.value })}
-                className={`${inputClass} resize-y min-h-[100px]`}
-              />
-            </div>
-
-            <div className="mb-6">
-              <label htmlFor="entry-size" className="block mb-2 font-medium text-[#333]">
-                Entry Size
+              <label htmlFor="entry-columns" className="block mb-2 font-medium text-[#333]">
+                Columns
               </label>
               <select
-                id="entry-size"
-                value={newEntry.size}
-                onChange={(e) => setNewEntry({ ...newEntry, size: e.target.value as typeof newEntry.size })}
+                id="entry-columns"
+                value={newEntry.columns}
+                onChange={(e) => {
+                  const columns = parseInt(e.target.value);
+                  setNewEntry({ ...newEntry, columns, images: resizeImages(newEntry.images, columns) });
+                }}
                 className={inputClass}
               >
-                <option value="" disabled>
-                  Select size…
-                </option>
-                <option value="small">Small</option>
-                <option value="medium">Medium</option>
-                <option value="large">Large</option>
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
               </select>
             </div>
 
+            {newEntry.images.map((image, imageIndex) => (
+              <div
+                key={imageIndex}
+                style={{
+                  borderTop: imageIndex > 0 ? '1px dashed #ddd' : undefined,
+                  paddingTop: imageIndex > 0 ? '1rem' : 0,
+                  marginTop: imageIndex > 0 ? '1rem' : 0,
+                }}
+              >
+                <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>Image {imageIndex + 1}</p>
+
+                <div className="mb-6">
+                  <label className="block mb-2 font-medium text-[#333]">Image URL</label>
+                  <input
+                    type="url"
+                    value={image.url}
+                    onChange={(e) =>
+                      setNewEntry({
+                        ...newEntry,
+                        images: newEntry.images.map((img, i) => (i === imageIndex ? { ...img, url: e.target.value } : img)),
+                      })
+                    }
+                    className={inputClass}
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label className="block mb-2 font-medium text-[#333]">Image Title</label>
+                  <input
+                    type="text"
+                    value={image.title}
+                    onChange={(e) =>
+                      setNewEntry({
+                        ...newEntry,
+                        images: newEntry.images.map((img, i) => (i === imageIndex ? { ...img, title: e.target.value } : img)),
+                      })
+                    }
+                    className={inputClass}
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label className="block mb-2 font-medium text-[#333]">Image Description</label>
+                  <textarea
+                    value={image.description}
+                    onChange={(e) =>
+                      setNewEntry({
+                        ...newEntry,
+                        images: newEntry.images.map((img, i) => (i === imageIndex ? { ...img, description: e.target.value } : img)),
+                      })
+                    }
+                    className={`${inputClass} resize-y min-h-[100px]`}
+                  />
+                </div>
+              </div>
+            ))}
+
             {(() => {
-              const canAddEntry = !!newEntry.title && !!newEntry.imageUrl && !!newEntry.description && !!newEntry.size;
+              const canAddEntry = newEntryComplete;
               return (
                 <button
                   type="button"

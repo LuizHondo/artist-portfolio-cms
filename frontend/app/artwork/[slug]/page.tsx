@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Paper, MarkText, Icon, PlaceholderImg } from '@/lib/design/shared';
@@ -6,7 +7,7 @@ import { PublicNav } from '@/components/PublicNav';
 import { SiteFooter } from '@/components/SiteFooter';
 import { CONTACT_EMAIL, enabledSocials } from '@/lib/social-links';
 import { ACCENT_COLOR } from '@/lib/theme';
-import { projV2Styles as s, SPAN } from '@/components/artwork/artworkStyles';
+import { projV2Styles as s } from '@/components/artwork/artworkStyles';
 
 export default async function ArtworkPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -21,16 +22,18 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
     <Paper style={s.page}>
       <PublicNav active="Artworks" variant="bar" />
 
-      <Link href="/" style={s.back}>
+      <Link href="/" style={s.back} className="px-5 pt-6 md:px-16 md:pt-7">
         <Icon name="arrow-left" size={16} /> back to all artworks
       </Link>
 
-      <div style={s.titleBlock}>
+      <div style={s.titleBlock} className="grid-cols-1 gap-6 px-5 py-8 md:grid-cols-[1.4fr_1fr] md:gap-14 md:px-16 md:pt-10 md:pb-12">
         <div>
           <div style={s.plateNum}>
             No. {plate} · {artwork.medium.split(' · ')[0].toUpperCase()}
           </div>
-          <h1 style={s.bigTitle}>{artwork.title}</h1>
+          <h1 style={s.bigTitle} className="text-[44px] md:text-[104px]">
+            {artwork.title}
+          </h1>
         </div>
         <div style={s.meta}>
           <div style={s.metaRow}>
@@ -52,60 +55,61 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
         </div>
       </div>
 
-      <div style={s.heroWrap}>
+      <div style={s.heroWrap} className="mx-5 pb-10 md:mx-16 md:pb-[60px]">
         <div>
-          <div style={{ height: 820, background: '#e8e4dc', overflow: 'hidden' }}>
-            {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-entered URL */}
-            <img src={artwork.coverImage} alt={artwork.title} style={{ ...s.heroPlateImg, height: '100%' }} />
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-entered URL */}
+          <img src={artwork.coverImage} alt={artwork.title} style={s.heroPlateImg} />
           <div style={s.heroCaption}>{artwork.title} — cover</div>
         </div>
       </div>
 
-      <div style={{ padding: '0 64px', maxWidth: 980 }}>
-        <p style={{ fontSize: 27, lineHeight: 1.5, letterSpacing: '-0.005em' }}>{artwork.summary}</p>
+      <div className="px-5 md:px-16" style={{ maxWidth: 980 }}>
+        <p className="text-[19px] md:text-[27px]" style={{ lineHeight: 1.5, letterSpacing: '-0.005em' }}>
+          {artwork.summary}
+        </p>
       </div>
 
-      <div style={s.entriesWrap}>
-        {artwork.entries.map((entry, i) => {
-          const [span, height] = SPAN[entry.size];
-          // A run of consecutive small entries starts its own row, so three
-          // smalls read as a three-up instead of filling a previous leftover.
-          const startsRun = entry.size === 'small' && artwork.entries[i - 1]?.size !== 'small';
+      <div style={s.entriesWrap} className="gap-12 px-5 pt-12 pb-8 md:gap-[88px] md:px-16 md:pt-24 md:pb-10">
+        {artwork.entries.map((entry) => {
           return (
             <div
               key={entry.id}
-              style={{ gridColumn: startsRun ? `1 / span ${span}` : `span ${span}`, alignSelf: 'start' }}
+              className="grid grid-cols-1 gap-6 md:gap-10 md:[grid-template-columns:repeat(var(--cols),1fr)]"
+              style={{ '--cols': entry.columns } as CSSProperties}
             >
-              <div style={{ height, background: '#e8e4dc', overflow: 'hidden' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-entered URL */}
-                <img src={entry.imageUrl} alt={entry.title} style={s.entryImg} />
-              </div>
-              <div style={s.entryTextPad}>
-                <div style={s.entryNum}>
-                  {String(entry.displayOrder).padStart(2, '0')} · {entry.size.toUpperCase()}
+              {entry.images.map((image) => (
+                <div key={image.url}>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-entered URL */}
+                  <img src={image.url} alt={image.title} style={s.entryImg} />
+                  <div style={s.entryTextPad}>
+                    <div style={s.entryNum}>
+                      {String(entry.displayOrder).padStart(2, '0')} · {entry.columns} COL
+                    </div>
+                    <h3 style={s.entryTitle}>{image.title}</h3>
+                    <div style={s.entryDesc}>
+                      <MarkText text={image.description} />
+                    </div>
+                  </div>
                 </div>
-                <h3 style={s.entryTitle}>{entry.title}</h3>
-                <div style={s.entryDesc}>
-                  <MarkText text={entry.description} />
-                </div>
-              </div>
+              ))}
             </div>
           );
         })}
       </div>
 
-      <section style={s.finale}>
+      <section style={s.finale} className="px-5 py-16 md:px-16 md:py-[120px]">
         <div style={s.finaleRule} />
         <div style={s.finaleSmall}>FIN.</div>
-        <h2 style={s.finaleBig}>{artwork.title.toUpperCase()}</h2>
+        <h2 style={s.finaleBig} className="text-[56px] md:text-[176px]">
+          {artwork.title.toUpperCase()}
+        </h2>
         <div style={s.finaleSmall}>RAUL BARBOSA · 2026</div>
       </section>
 
-      <div style={s.footer}>
+      <div style={s.footer} className="grid-cols-1 gap-10 px-5 py-12 md:grid-cols-[1.3fr_1fr] md:gap-14 md:px-16 md:py-24">
         <div>
           <h3 style={s.footTitle}>More from the journal</h3>
-          <div style={s.relGrid}>
+          <div style={s.relGrid} className="grid-cols-2 md:grid-cols-3">
             {related.map((r) => (
               <Link key={r.slug} href={`/artwork/${r.slug}`} style={s.relCard}>
                 <PlaceholderImg src={r.coverImage} ratio="3/4" />

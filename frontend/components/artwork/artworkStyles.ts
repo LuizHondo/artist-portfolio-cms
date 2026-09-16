@@ -8,7 +8,6 @@ export const projV2Styles: Record<string, CSSProperties> = {
     display: 'inline-flex',
     alignItems: 'center',
     gap: 10,
-    padding: '28px 64px 0',
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
     fontSize: 11,
     letterSpacing: '0.18em',
@@ -21,10 +20,7 @@ export const projV2Styles: Record<string, CSSProperties> = {
   },
 
   titleBlock: {
-    padding: '40px 64px 48px',
     display: 'grid',
-    gridTemplateColumns: '1.4fr 1fr',
-    gap: 56,
     alignItems: 'end',
   },
   plateNum: {
@@ -36,7 +32,6 @@ export const projV2Styles: Record<string, CSSProperties> = {
   },
   bigTitle: {
     fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
-    fontSize: 104,
     lineHeight: 0.88,
     margin: 0,
     fontWeight: 500,
@@ -57,8 +52,8 @@ export const projV2Styles: Record<string, CSSProperties> = {
   },
   metaKey: { opacity: 0.5, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: 11 },
 
-  heroWrap: { margin: '0 64px', position: 'relative', paddingBottom: 60 },
-  heroPlateImg: { width: '100%', objectFit: 'cover', display: 'block' },
+  heroWrap: { position: 'relative' },
+  heroPlateImg: { width: '100%', height: 'auto', display: 'block' },
   heroCaption: {
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
     fontSize: 10,
@@ -72,13 +67,10 @@ export const projV2Styles: Record<string, CSSProperties> = {
   },
 
   entriesWrap: {
-    padding: '96px 64px 40px',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(12, 1fr)',
-    gap: 40,
-    rowGap: 88,
+    display: 'flex',
+    flexDirection: 'column',
   },
-  entryImg: { width: '100%', height: '100%', display: 'block', objectFit: 'cover' },
+  entryImg: { width: '100%', height: 'auto', display: 'block' },
   entryNum: {
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
     fontSize: 11,
@@ -96,7 +88,7 @@ export const projV2Styles: Record<string, CSSProperties> = {
   entryDesc: { fontSize: 18, lineHeight: 1.7, maxWidth: '62ch' },
   entryTextPad: { paddingTop: 18 },
 
-  finale: { background: '#1a1714', color: '#f6f4ef', padding: '120px 64px', textAlign: 'center', position: 'relative' },
+  finale: { background: '#1a1714', color: '#f6f4ef', textAlign: 'center', position: 'relative' },
   finaleRule: { width: 60, height: 1, background: '#f6f4ef', margin: '0 auto 28px' },
   finaleSmall: {
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
@@ -108,7 +100,6 @@ export const projV2Styles: Record<string, CSSProperties> = {
   },
   finaleBig: {
     fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
-    fontSize: 176,
     lineHeight: 0.84,
     margin: '28px 0',
     letterSpacing: '-0.018em',
@@ -116,7 +107,7 @@ export const projV2Styles: Record<string, CSSProperties> = {
     fontStyle: 'italic',
   },
 
-  footer: { display: 'grid', gridTemplateColumns: '1.3fr 1fr', padding: '96px 64px', gap: 56 },
+  footer: { display: 'grid' },
   footTitle: {
     fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
     fontSize: 36,
@@ -124,7 +115,7 @@ export const projV2Styles: Record<string, CSSProperties> = {
     letterSpacing: '-0.012em',
     margin: '0 0 26px',
   },
-  relGrid: { display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 },
+  relGrid: { display: 'grid', gap: 16 },
   relCard: { cursor: 'pointer', textDecoration: 'none', color: 'inherit', display: 'block' },
   relCap: { fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif', fontSize: 17, fontWeight: 400, marginTop: 10 },
 
@@ -158,11 +149,3 @@ export const projV2Styles: Record<string, CSSProperties> = {
   },
 };
 
-// imageSize → grid span (of 12) + plate height. Backend only ever sends
-// small/medium/large (see add-artwork-entry-size); design.md maps those to
-// 3 of the design's 5 tiers, dropping wide/tall (unreachable from admin data).
-export const SPAN: Record<'small' | 'medium' | 'large', [number, number]> = {
-  small: [4, 300],
-  medium: [6, 420],
-  large: [12, 760],
-};
