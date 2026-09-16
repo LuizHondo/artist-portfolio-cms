@@ -32,18 +32,31 @@ model Artwork {
 
 // Process entries for each artwork (journey documentation)
 model ArtworkEntry {
-  id              String    @id @default(cuid())
-  artwork         Artwork   @relation(fields: [artworkId], references: [id], onDelete: Cascade)
+  id              String              @id @default(cuid())
+  artwork         Artwork             @relation(fields: [artworkId], references: [id], onDelete: Cascade)
   artworkId       String
-  title           String
-  imageUrl        String
-  description     String
-  size            String    @default("medium")
+  columns         Int
   displayOrder    Int
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  images          ArtworkEntryImage[]
 
   @@map("artwork_entries")
+}
+
+// One image within a process entry's row; entry image count equals entry.columns
+model ArtworkEntryImage {
+  id          String       @id @default(cuid())
+  entry       ArtworkEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  entryId     String
+  position    Int
+  url         String
+  title       String
+  description String
+
+  @@unique([entryId, position])
+  @@map("artwork_entry_images")
 }
 
 // System-controlled tags (predefined)
