@@ -1,24 +1,19 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/lib/design/shared';
 import { enabledSocials } from '@/lib/social-links';
 import { useIsMobile } from '@/lib/useIsMobile';
 import { PublicNav } from '@/components/PublicNav';
+import MorphSlider from './MorphSlider';
 import { homeV1Styles as s } from './homeStyles';
 
 export function Hero({ slides }: { slides: string[] }) {
   const isMobile = useIsMobile();
-  const [slideIdx, setSlideIdx] = useState(0);
   const [locked, setLocked] = useState(true);
   const idleTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-
-  useEffect(() => {
-    if (slides.length < 2) return;
-    const t = setInterval(() => setSlideIdx((i) => (i + 1) % slides.length), 5000);
-    return () => clearInterval(t);
-  }, [slides.length]);
+  const morphItems = useMemo(() => slides.map((image) => ({ image })), [slides]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -71,31 +66,24 @@ export function Hero({ slides }: { slides: string[] }) {
 
   return (
     <section style={heroStyle}>
-      {slides.map((src, i) => (
-        <img
-          key={i}
-          src={src}
-          alt=""
-          style={{
-            ...s.heroSlide,
-            opacity: i === slideIdx ? 1 : 0,
-            animation: i === slideIdx ? 'heroPan 14s ease-in-out infinite alternate' : 'none',
-          }}
+      <div style={{ position: 'absolute', inset: 0 }}>
+        <MorphSlider
+          items={morphItems}
+          transition="melt"
+          intensity={0.55}
+          aberration={0.35}
+          drift={0.4}
+          autoplay
+          autoplayDelay={5}
+          showCaptions={false}
+          showControls={false}
+          showIndicators={false}
+          radius={0}
         />
-      ))}
+      </div>
       <div style={{ ...s.heroScrim, opacity: locked ? 0.25 : 1, transition: 'opacity .8s' }} />
 
       <PublicNav active="Home" variant="hero" locked={locked} />
-
-      <div style={{ ...s.heroDots, opacity: contentOpacity, pointerEvents: locked ? 'none' : 'auto', transition: 'opacity .8s' }}>
-        {slides.map((_, i) => (
-          <div
-            key={i}
-            onClick={() => setSlideIdx(i)}
-            style={{ ...s.heroDot, ...(i === slideIdx ? s.heroDotActive : {}) }}
-          />
-        ))}
-      </div>
 
       {!isMobile && (
         <div style={{ ...s.heroBottomLeft, opacity: contentOpacity, transition: 'opacity .8s', width: 726 }}>
