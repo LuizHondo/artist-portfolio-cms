@@ -16,7 +16,6 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
 
   const all = await getArtworks();
   const related = all.filter((x) => x.slug !== artwork.slug && x.featuredPriority > 0).slice(0, 6);
-  const plate = String(all.findIndex((x) => x.slug === artwork.slug) + 1).padStart(3, '0');
 
   return (
     <Paper style={s.page}>
@@ -28,29 +27,23 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
 
       <div style={s.titleBlock} className="grid-cols-1 gap-6 px-5 py-8 md:grid-cols-[1.4fr_1fr] md:gap-14 md:px-16 md:pt-10 md:pb-12">
         <div>
-          <div style={s.plateNum}>
-            No. {plate} · {artwork.medium.split(' · ')[0].toUpperCase()}
-          </div>
+          <div style={s.plateNum}>{artwork.medium.split(' · ')[0].toUpperCase()}</div>
           <h1 style={s.bigTitle} className="text-[44px] md:text-[104px]">
             {artwork.title}
           </h1>
         </div>
         <div style={s.meta}>
           <div style={s.metaRow}>
-            <span style={s.metaKey}>Year</span>
-            <span>{artwork.yearCreated}</span>
-          </div>
-          <div style={s.metaRow}>
             <span style={s.metaKey}>Medium</span>
             <span>{artwork.medium}</span>
           </div>
           <div style={s.metaRow}>
-            <span style={s.metaKey}>Entries</span>
-            <span>{artwork.entries.length}</span>
+            <span style={s.metaKey}>Tags</span>
+            <span>{artwork.artworkTags.map((at) => at.tag.name).join(', ')}</span>
           </div>
           <div style={s.metaRow}>
-            <span style={s.metaKey}>Added</span>
-            <span>{new Date(artwork.createdAt).toISOString().slice(0, 10)}</span>
+            <span style={s.metaKey}>Year</span>
+            <span>{artwork.yearCreated}</span>
           </div>
         </div>
       </div>
@@ -78,9 +71,7 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
               style={{ '--cols': entry.columns } as CSSProperties}
             >
               {entry.images.map((image) => (
-                <div key={image.url}>
-                  {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-entered URL */}
-                  <img src={image.url} alt={image.title} style={s.entryImg} />
+                <div key={image.url} style={{ minWidth: 0, display: 'flex', flexDirection: 'column' }}>
                   <div style={s.entryTextPad}>
                     <div style={s.entryNum}>
                       {String(entry.displayOrder).padStart(2, '0')} · {entry.columns} COL
@@ -90,6 +81,8 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
                       <MarkText text={image.description} />
                     </div>
                   </div>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary admin-entered URL */}
+                  <img src={image.url} alt={image.title} style={{ ...s.entryImg, marginTop: 'auto' }} />
                 </div>
               ))}
             </div>

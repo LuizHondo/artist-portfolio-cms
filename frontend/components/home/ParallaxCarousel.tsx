@@ -485,14 +485,9 @@ const ParallaxCarousel = React.forwardRef<ParallaxCarouselRef, ParallaxCarouselP
         scrollRef.current.target += delta * settings.wheelSensitivity;
       };
 
-      const onPointerDown = (e: PointerEvent) => {
-        draggingRef.current = true;
-        dragMovedRef.current = false;
-        lastPointerXRef.current = e.clientX;
-        node.setPointerCapture(e.pointerId);
-        node.style.cursor = 'grabbing';
-      };
-
+      // Drag tracked via window listeners (not setPointerCapture) so the
+      // click that ends a plain click still targets the item under the
+      // pointer instead of being retargeted to this container.
       const onPointerMove = (e: PointerEvent) => {
         if (!draggingRef.current) return;
         const settings = settingsRef.current;
@@ -502,15 +497,24 @@ const ParallaxCarousel = React.forwardRef<ParallaxCarouselRef, ParallaxCarouselP
         scrollRef.current.target -= dx * settings.dragSensitivity;
       };
 
-      const onPointerUp = (e: PointerEvent) => {
+      const endDrag = () => {
         if (!draggingRef.current) return;
         draggingRef.current = false;
-        try {
-          node.releasePointerCapture(e.pointerId);
-        } catch {
-          /* ignore */
-        }
         node.style.cursor = 'grab';
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', endDrag);
+        window.removeEventListener('pointercancel', endDrag);
+      };
+
+      const onPointerDown = (e: PointerEvent) => {
+        if (e.button !== undefined && e.button !== 0) return;
+        draggingRef.current = true;
+        dragMovedRef.current = false;
+        lastPointerXRef.current = e.clientX;
+        node.style.cursor = 'grabbing';
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', endDrag);
+        window.addEventListener('pointercancel', endDrag);
       };
 
       const onEnter = () => {
@@ -522,22 +526,17 @@ const ParallaxCarousel = React.forwardRef<ParallaxCarouselRef, ParallaxCarouselP
 
       node.addEventListener('wheel', onWheel, { passive: true });
       node.addEventListener('pointerdown', onPointerDown);
-      node.addEventListener('pointermove', onPointerMove);
-      node.addEventListener('pointerup', onPointerUp);
-      node.addEventListener('pointercancel', onPointerUp);
-      node.addEventListener('pointerleave', onPointerUp);
       node.addEventListener('mouseenter', onEnter);
       node.addEventListener('mouseleave', onLeave);
 
       return () => {
         node.removeEventListener('wheel', onWheel);
         node.removeEventListener('pointerdown', onPointerDown);
-        node.removeEventListener('pointermove', onPointerMove);
-        node.removeEventListener('pointerup', onPointerUp);
-        node.removeEventListener('pointercancel', onPointerUp);
-        node.removeEventListener('pointerleave', onPointerUp);
         node.removeEventListener('mouseenter', onEnter);
         node.removeEventListener('mouseleave', onLeave);
+        window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('pointerup', endDrag);
+        window.removeEventListener('pointercancel', endDrag);
       };
     }, []);
 

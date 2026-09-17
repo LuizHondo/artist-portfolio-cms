@@ -85,9 +85,10 @@ export const projV2Styles: Record<string, CSSProperties> = {
     fontWeight: 500,
     letterSpacing: '-0.01em',
     margin: '0 0 10px',
+    overflowWrap: 'break-word',
   },
-  entryDesc: { fontSize: 18, lineHeight: 1.7, maxWidth: '62ch' },
-  entryTextPad: { paddingTop: 18 },
+  entryDesc: { fontSize: 18, lineHeight: 1.7, maxWidth: '62ch', overflowWrap: 'break-word' },
+  entryTextPad: { paddingBottom: 18 },
 
   finale: { background: COLORS.ink, color: COLORS.cream, textAlign: 'center', position: 'relative' },
   finaleRule: { width: 60, height: 1, background: COLORS.cream, margin: '0 auto 28px' },
