@@ -43,13 +43,6 @@ body {
   }
 }
 
-.archive-rail {
-  scrollbar-width: none;
-}
-.archive-rail::-webkit-scrollbar {
-  display: none;
-}
-
 .gallery-overlay {
   opacity: 0;
   transition: opacity 0.2s ease;

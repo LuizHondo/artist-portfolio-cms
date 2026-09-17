@@ -1,18 +1,17 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { Icon, PlaceholderImg } from '@/lib/design/shared';
+import { PlaceholderImg } from '@/lib/design/shared';
 import { COLORS } from '@/lib/theme';
 import { useIsMobile } from '@/lib/useIsMobile';
 import type { Artwork } from '@/lib/types';
 import { homeV1Styles as s } from './homeStyles';
+import ParallaxCarousel from './ParallaxCarousel';
 
 export function Gallery({ artworks }: { artworks: Artwork[] }) {
   const isMobile = useIsMobile();
   const [filter, setFilter] = useState('All');
-  const railRef = useRef<HTMLDivElement>(null);
-  const [railScrolls, setRailScrolls] = useState(false);
 
   // featuredPriority drives placement: 0 never appears, 1 leads, 2 mid,
   // 3 gets the archive rail.
@@ -24,18 +23,6 @@ export function Gallery({ artworks }: { artworks: Artwork[] }) {
   const t2 = tier(2);
   const t3 = tier(3);
   const years = shown.map((a) => a.yearCreated);
-
-  const scrollRail = (dir: number) => railRef.current?.scrollBy({ left: dir * 504, behavior: 'smooth' });
-
-  useEffect(() => {
-    const el = railRef.current;
-    if (!el) return;
-    const check = () => setRailScrolls(el.scrollWidth > el.clientWidth + 4);
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [t3.length, filter]);
 
   return (
     <section id="gallery" style={{ ...s.section, ...(isMobile ? { padding: '56px 20px' } : {}) }}>
@@ -107,28 +94,31 @@ export function Gallery({ artworks }: { artworks: Artwork[] }) {
             <span style={s.tierLabel}>Archive</span>
             <span style={s.tierNote}>priority 03</span>
           </div>
-          <div style={s.railWrap}>
-            {railScrolls && (
-              <button style={{ ...s.railBtn, left: -8 }} onClick={() => scrollRail(-1)} aria-label="previous">
-                <Icon name="arrow-left" size={18} />
-              </button>
-            )}
-            <div ref={railRef} className="archive-rail" style={s.rail}>
-              {t3.slice(0, 10).map((a) => (
-                <Link key={a.id} href={`/artwork/${a.slug}`} style={{ ...s.card, ...s.railItem }} className="gallery-card">
-                  <PlaceholderImg src={a.coverImage} ratio="3/4" />
+          <div style={{ width: '100%', height: isMobile ? 320 : 420, background: COLORS.background }}>
+            <ParallaxCarousel
+              images={t3.slice(0, 10).map((a) => a.coverImage)}
+              items={t3.slice(0, 10).map((a) => ({
+                href: `/artwork/${a.slug}`,
+                content: (
                   <div className="gallery-overlay" style={{ ...s.cardOverlay, alignItems: 'center', textAlign: 'center' }}>
                     <h3 style={{ ...s.cardTitle, fontSize: 15, color: COLORS.cream }}>{a.title}</h3>
                     <div style={s.cardOverlayMeta}>{a.yearCreated}</div>
                   </div>
-                </Link>
-              ))}
-            </div>
-            {railScrolls && (
-              <button style={{ ...s.railBtn, right: -8 }} onClick={() => scrollRail(1)} aria-label="next">
-                <Icon name="arrow" size={18} />
-              </button>
-            )}
+                ),
+              }))}
+              imageWidth={isMobile ? 190 : 260}
+              imageHeight={isMobile ? 250 : 340}
+              gap={isMobile ? 20 : 32}
+              parallaxIntensity={0.35}
+              borderRadius={0}
+              loop
+              autoplaySpeed={22}
+            />
+          </div>
+          <div style={{ textAlign: 'center', marginTop: 16 }}>
+            <Link href="/artworks" style={{ ...s.tierNote, textDecoration: 'underline' }}>
+              Browse the full archive
+            </Link>
           </div>
         </>
       )}

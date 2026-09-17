@@ -213,32 +213,6 @@ export const homeV1Styles: Record<string, CSSProperties> = {
     letterSpacing: '-0.01em',
   },
 
-  railWrap: { position: 'relative', display: 'flex', alignItems: 'center' },
-  rail: {
-    display: 'flex',
-    gap: 16,
-    overflowX: 'auto',
-    scrollSnapType: 'x mandatory',
-    padding: '4px 44px',
-    margin: '0 auto',
-    justifyContent: 'center',
-    width: '100%',
-  },
-  railItem: { flex: '0 0 236px', scrollSnapAlign: 'center' },
-  railBtn: {
-    position: 'absolute',
-    zIndex: 2,
-    width: 40,
-    height: 40,
-    background: COLORS.cream,
-    color: COLORS.ink,
-    border: '1px solid rgba(26,23,20,0.25)',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
   mobileStack: {
     position: 'absolute',
     left: 20,

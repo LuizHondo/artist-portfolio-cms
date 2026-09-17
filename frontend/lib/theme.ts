@@ -3,7 +3,7 @@
 // the few spots that need a plain CSS value instead of a JS style object.
 export const COLORS = {
   background: '#f0ebe1', // page bg behind the Paper wrapper (about, artwork detail)
-  ink: '#2e2e2e', // default body text; dark surfaces (active filter pill, ink-on-cream buttons, bar nav text)
+  ink: '#241b1b', // default body text; dark surfaces (active filter pill, ink-on-cream buttons, bar nav text)
   inkDark: '#2e2e2e', // home hero section background, behind the slideshow
   inkSoft: '#2e2e2e', // artwork detail meta/caption text (plate info, figure captions)
   cream: '#f6f4ef', // text/icons on dark surfaces (hero, gallery card overlays, links page, footer CTA button)
