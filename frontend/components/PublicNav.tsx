@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { COLORS } from '@/lib/theme';
+import { LogoMark } from '@/components/LogoMark';
 
 // Shared Home / Artworks / About nav, matching home-v1.jsx's NavV1 link set
 // and active-state logic. Home floats transparent over the hero (`hero`);
@@ -18,11 +19,10 @@ const logoWrap = {
   textTransform: 'uppercase' as const,
   fontWeight: 700,
   cursor: 'pointer',
+  overflow: 'hidden',
 };
 const logoScript = {
-  fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
-  fontStyle: 'italic' as const,
-  fontWeight: 500,
+  fontFamily: '"Permanent Marker", cursive',
   fontSize: 20,
   letterSpacing: 0,
   textTransform: 'none' as const,
@@ -67,7 +67,7 @@ const variants = {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '24px 64px',
+      padding: '12px 24px',
       borderBottom: '1px solid rgba(26,23,20,0.25)',
       color: COLORS.ink,
     },
@@ -80,8 +80,16 @@ export function PublicNav({ active, variant, locked = false }: { active?: Active
   const v = variants[variant];
   return (
     <nav style={{ ...v.nav, opacity: locked ? 0 : 1, pointerEvents: locked ? 'none' : 'auto', transition: 'opacity .8s' }} aria-hidden={locked}>
-      <Link href="/artworks" style={logoWrap} tabIndex={locked ? -1 : undefined}>
-        <span style={logoScript}>Raul Barbosa</span>Illustrator &amp; Animator
+      <Link
+        href="/artworks"
+        className="logo-link"
+        style={{ ...logoWrap, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+        tabIndex={locked ? -1 : undefined}
+      >
+        <LogoMark size={100} />
+        <span className="logo-wordmark">
+          <span style={logoScript}>Raul Barbosa</span>Illustrator &amp; Animator
+        </span>
       </Link>
       <div style={navLinksRow}>
         {links.map((l) => (
