@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { PlaceholderImg } from '@/lib/design/shared';
 import { COLORS } from '@/lib/theme';
@@ -11,14 +10,11 @@ import ParallaxCarousel from './ParallaxCarousel';
 
 export function Home({ artworks }: { artworks: Artwork[] }) {
   const isMobile = useIsMobile();
-  const [filter, setFilter] = useState('All');
 
   // featuredPriority drives placement: 0 never appears, 1 leads, 2 mid,
   // 3 gets the archive rail.
   const shown = artworks.filter((a) => a.featuredPriority > 0);
-  const mediums = ['All', ...Array.from(new Set(shown.map((a) => a.medium.split(' · ')[0])))];
-  const inFilter = (a: Artwork) => filter === 'All' || a.medium.startsWith(filter);
-  const tier = (p: number) => shown.filter((a) => a.featuredPriority === p && inFilter(a));
+  const tier = (p: number) => shown.filter((a) => a.featuredPriority === p);
   const t1 = tier(1);
   const t2 = tier(2);
   const t3 = tier(3);
@@ -27,24 +23,12 @@ export function Home({ artworks }: { artworks: Artwork[] }) {
   return (
     <section id="gallery" style={{ ...s.section, ...(isMobile ? { padding: '56px 20px' } : {}) }}>
       <div style={s.sectionHead}>
-        <h2 style={s.sectionTitle}>Artworks</h2>
+        <h2 style={s.sectionTitle}>Featured Works</h2>
         {shown.length > 0 && (
           <div style={s.sectionSub}>
             {Math.min(...years)} — {Math.max(...years)} · {shown.length} artworks
           </div>
         )}
-      </div>
-
-      <div style={s.filters}>
-        {mediums.map((m) => (
-          <button
-            key={m}
-            onClick={() => setFilter(m)}
-            style={{ ...s.filter, ...(m === filter ? s.filterActive : {}) }}
-          >
-            {m}
-          </button>
-        ))}
       </div>
 
       {t1.length > 0 && (
@@ -123,7 +107,7 @@ export function Home({ artworks }: { artworks: Artwork[] }) {
         </>
       )}
 
-      {t1.length + t2.length + t3.length === 0 && <div style={s.empty}>Nothing in this medium yet.</div>}
+      {t1.length + t2.length + t3.length === 0 && <div style={s.empty}>Nothing here yet.</div>}
     </section>
   );
 }
