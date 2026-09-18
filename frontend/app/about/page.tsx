@@ -1,6 +1,7 @@
 import { Paper, Icon } from '@/lib/design/shared';
 import { PublicNav } from '@/components/PublicNav';
 import { SiteFooter } from '@/components/SiteFooter';
+import { homeV1Styles as hs } from '@/components/home/homeStyles';
 import { CONTACT_EMAIL, enabledSocials } from '@/lib/social-links';
 import { COLORS } from '@/lib/theme';
 
@@ -10,22 +11,6 @@ const SKILLS = ['Illustration', 'Character Design', 'Concept Art', 'Storyboard',
 
 const s = {
   page: { width: '100%', maxWidth: 1440, margin: '0 auto', color: COLORS.ink, fontFamily: '"Newsreader", Georgia, serif' },
-  band: {
-    padding: '40px 56px 24px',
-    display: 'flex',
-    alignItems: 'baseline',
-    justifyContent: 'space-between',
-    borderBottom: '1px solid rgba(26,23,20,0.12)',
-  },
-  bandLeft: { fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif', fontSize: 12, letterSpacing: '0.22em', opacity: 0.6 },
-  bandRight: {
-    fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
-    fontSize: 11,
-    letterSpacing: '0.18em',
-    textTransform: 'uppercase' as const,
-    fontWeight: 600,
-    opacity: 0.55,
-  },
   hero: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0, minHeight: 720 },
   heroImg: { width: '100%', height: '100%', objectFit: 'cover' as const, display: 'block' },
   heroRight: { padding: '72px 64px 72px', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' },
@@ -115,9 +100,11 @@ export default function AboutPage() {
     <Paper style={s.page}>
       <PublicNav active="About" variant="bar" />
 
-      <div style={s.band}>
-        <div style={s.bandLeft}>FOLIO 002 · ABOUT THE ARTIST</div>
-        <div style={s.bandRight}>São Paulo, Brazil · est. 1998</div>
+      <div style={{ padding: '56px 56px 0' }}>
+        <div style={hs.sectionHead}>
+          <h2 style={hs.sectionTitle}>About</h2>
+          <div style={hs.sectionSub}>Curitiba, Brazil · est. 1998</div>
+        </div>
       </div>
 
       <section style={s.hero}>
@@ -206,7 +193,7 @@ export default function AboutPage() {
             </div>
             <div style={s.colophonRow}>
               <span style={s.colKey}>Lives</span>
-              <span style={s.colVal}>São Paulo, with two cats</span>
+              <span style={s.colVal}>Curitiba, with two cats</span>
             </div>
           </div>
         </div>

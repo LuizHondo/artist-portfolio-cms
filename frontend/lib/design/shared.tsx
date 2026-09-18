@@ -1,6 +1,7 @@
 'use client';
 
 import type { CSSProperties, ReactNode } from 'react';
+import { SiArtstation, SiBehance, SiBluesky, SiInstagram, SiX, SiYoutube } from '@icons-pack/react-simple-icons';
 import { COLORS } from '@/lib/theme';
 
 export function Paper({ children, style }: { children: ReactNode; style?: CSSProperties }) {
@@ -73,44 +74,34 @@ export function Icon({ name, size = 18, color = 'currentColor' }: { name: IconNa
   };
   switch (name) {
     case 'x':
-      return (
-        <svg {...props}>
-          <path d="M5 4 L19 20 M19 4 L5 20" />
-        </svg>
-      );
+      return <SiX size={size} color={color} />;
     case 'bluesky':
-      return (
-        <svg {...props}>
-          <path d="M12 11 C10 8 7 5 4 5 C3 8 4 11 8 13 C5 13 4 15 5 18 C8 18 11 16 12 14 C13 16 16 18 19 18 C20 15 19 13 16 13 C20 11 21 8 20 5 C17 5 14 8 12 11 Z" />
-        </svg>
-      );
+      return <SiBluesky size={size} color={color} />;
     case 'cara':
-      return (
-        <svg {...props}>
-          <path d="M5 8 H11 Q15 8 15 12 Q15 16 11 16 H5 Z M15 8 H19 M15 12 H20" />
-        </svg>
-      );
+      // Cara has no vector brand mark (not in Simple Icons, site blocks non-browser fetches) —
+      // using their favicon (cara.app/favicon.ico) as a fixed-color raster, saved to public/icons/cara.png.
+      // eslint-disable-next-line @next/next/no-img-element
+      return <img src="/icons/cara.png" width={size} height={size} alt="Cara" style={{ borderRadius: '50%' }} />;
     case 'vgen':
+      // Official VGen icon mark (vgen.co/img/logo-icon-black-outline.svg), flattened to `color` to match the other marks.
       return (
-        <svg {...props}>
-          <path d="M4 6 L9 18 L14 6 M14 6 L20 18" />
+        <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            fill={color}
+            d="M15.019 7.535a8.337 8.337 0 0 1 11.774.617l.248.275c1.409 1.527 2.666 3.731 2.612 5.905a4.5 4.5 0 0 1-.665 2.252l-.082.131q-.068.109-.187.291c-.159.242-.383.578-.664.977a36 36 0 0 1-2.31 2.959c-.938 1.073-2.134 2.29-3.497 3.273-1.282.924-3.23 2.019-5.574 2.019-2.297 0-4.268-1.059-5.573-1.934-1.407-.944-2.688-2.122-3.718-3.176a41 41 0 0 1-3.53-4.15l-.091-.125a4.469 4.469 0 0 1 7.252-5.221l.033.045.145.194a31 31 0 0 0 1.084 1.354 8.3 8.3 0 0 1 2.743-5.686"
+          />
+          <path
+            fill={color}
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M16.317 9.048a5.47 5.47 0 0 1 7.725.405l.26.287.002.004c1.175 1.268 1.897 2.791 1.863 3.913v.003c-.007.274-.084.55-.239.802l-.019.03-.044.071-.166.258c-.143.219-.35.528-.61.897a33 33 0 0 1-2.123 2.72c-.863.989-1.897 2.029-3.014 2.834-1.088.784-2.438 1.478-3.899 1.478-1.444 0-2.833-.681-3.975-1.448-1.179-.79-2.305-1.817-3.264-2.798a38 38 0 0 1-3.325-3.919l-.02-.028c-.143-.224-.234-.383-.283-.69A1.598 1.598 0 0 1 7.1 12.054c.48.106.76.353.967.632l.001.001.01.014.04.055.167.223a35 35 0 0 0 2.82 3.287c.88.9 1.833 1.757 2.757 2.377.962.645 1.7.905 2.191.905.363 0 .842-.145 1.424-.481l.406-.235-.355-.306a4 4 0 0 1-.322-.315l-1.294-1.438a5.47 5.47 0 0 1 .405-7.725m6.07 4.945a30 30 0 0 1-1.832 2.339l-.017.019-.233.266-2.006-1.98-.007-.006a2.268 2.268 0 1 1 3.37-3.035l.26.287c.25.279.465.588.572.933.11.355.099.732-.073 1.12l-.014.03z"
+          />
         </svg>
       );
     case 'instagram':
-      return (
-        <svg {...props}>
-          <rect x="3" y="3" width="18" height="18" rx="5" />
-          <circle cx="12" cy="12" r="4" />
-          <circle cx="17.5" cy="6.5" r="0.6" fill={color} />
-        </svg>
-      );
+      return <SiInstagram size={size} color={color} />;
     case 'artstation':
-      return (
-        <svg {...props}>
-          <path d="M3 17 L13 4 L19 14 H8" />
-          <path d="M14 17 L17 21" />
-        </svg>
-      );
+      return <SiArtstation size={size} color={color} />;
     case 'linkedin':
       return (
         <svg {...props}>
@@ -119,20 +110,9 @@ export function Icon({ name, size = 18, color = 'currentColor' }: { name: IconNa
         </svg>
       );
     case 'behance':
-      return (
-        <svg {...props}>
-          <path d="M3 6 H8 Q10 6 10 8 Q10 10 8 10 H3 Z M3 10 H9 Q11 10 11 13 Q11 15 9 15 H3 Z" />
-          <path d="M14 12 Q14 9 17 9 Q20 9 20 12 H14 Q14 15 17 15" />
-          <path d="M15 6 H19" />
-        </svg>
-      );
+      return <SiBehance size={size} color={color} />;
     case 'youtube':
-      return (
-        <svg {...props}>
-          <rect x="2.5" y="6" width="19" height="12" rx="3" />
-          <path d="M10 9.5 L15 12 L10 14.5 Z" fill={color} />
-        </svg>
-      );
+      return <SiYoutube size={size} color={color} />;
     case 'mail':
       return (
         <svg {...props}>

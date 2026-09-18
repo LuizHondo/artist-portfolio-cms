@@ -87,3 +87,15 @@ body {
     display: none;
   }
 }
+
+.nav-burger {
+  display: none;
+}
+@media (max-width: 760px) {
+  .nav-links-row {
+    display: none !important;
+  }
+  .nav-burger {
+    display: inline-flex;
+  }
+}

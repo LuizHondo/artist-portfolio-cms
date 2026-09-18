@@ -1,10 +1,9 @@
 import Link from 'next/link';
-import { getFeatured } from '@/lib/api/artworks';
 import { CONTACT_EMAIL, enabledSocials } from '@/lib/social-links';
 import { COLORS } from '@/lib/theme';
 
 const footerStyles = {
-  wrap: { background: COLORS.black, color: COLORS.white, containerType: 'inline-size', overflow: 'hidden', padding: '120px 0 0' },
+  wrap: { background: COLORS.black, color: COLORS.cream, containerType: 'inline-size', overflow: 'hidden', padding: '120px 0 0' },
   top: {
     display: 'grid',
     gridTemplateColumns: 'minmax(0,1.15fr) minmax(0,1fr)',
@@ -17,7 +16,7 @@ const footerStyles = {
     fontSize: 11,
     letterSpacing: '0.24em',
     textTransform: 'uppercase' as const,
-    color: 'rgba(255,255,255,0.5)',
+    color: 'rgba(246,244,239,0.5)',
     margin: '0 0 24px',
   },
   ctaLink: {
@@ -26,7 +25,7 @@ const footerStyles = {
     fontSize: 'clamp(36px,5.4cqw,82px)',
     lineHeight: 0.94,
     letterSpacing: '-0.018em',
-    color: COLORS.white,
+    color: COLORS.cream,
     textDecoration: 'none',
     margin: 0,
   },
@@ -36,9 +35,9 @@ const footerStyles = {
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
     fontSize: 13,
     letterSpacing: '0.06em',
-    color: 'rgba(255,255,255,0.62)',
+    color: 'rgba(246,244,239,0.62)',
     textDecoration: 'none',
-    borderBottom: '1px solid rgba(255,255,255,0.3)',
+    borderBottom: '1px solid rgba(246,244,239,0.3)',
     paddingBottom: 2,
   },
   cols: { display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0,1fr))', gap: 32, paddingTop: 10 },
@@ -47,7 +46,7 @@ const footerStyles = {
     fontSize: 10,
     letterSpacing: '0.22em',
     textTransform: 'uppercase' as const,
-    color: 'rgba(255,255,255,0.4)',
+    color: 'rgba(246,244,239,0.4)',
     margin: '0 0 16px',
   },
   colList: { display: 'flex', flexDirection: 'column' as const, gap: 9, margin: 0, padding: 0, listStyle: 'none' },
@@ -56,7 +55,7 @@ const footerStyles = {
     fontSize: 17,
     fontWeight: 400,
     letterSpacing: 0,
-    color: 'rgba(255,255,255,0.82)',
+    color: 'rgba(246,244,239,0.82)',
     textDecoration: 'none',
     cursor: 'pointer',
     background: 'none',
@@ -76,7 +75,7 @@ const footerStyles = {
     width: '108cqw',
     marginLeft: '-4cqw',
     textAlign: 'center' as const,
-    color: COLORS.white,
+    color: COLORS.cream,
   },
   legal: {
     display: 'flex',
@@ -88,14 +87,11 @@ const footerStyles = {
     fontSize: 11,
     letterSpacing: '0.18em',
     textTransform: 'uppercase' as const,
-    color: 'rgba(255,255,255,0.38)',
+    color: 'rgba(246,244,239,0.38)',
   },
 };
 
-export async function SiteFooter() {
-  const featured = await getFeatured().catch(() => []);
-  const latest = featured[0];
-
+export function SiteFooter() {
   return (
     <footer style={footerStyles.wrap}>
       <div style={footerStyles.top}>
@@ -115,17 +111,15 @@ export async function SiteFooter() {
             <p style={footerStyles.colHead}>Index</p>
             <ul style={footerStyles.colList}>
               <li>
-                <Link href="/" style={footerStyles.colItem}>
+                <Link href="/artworks" style={footerStyles.colItem}>
                   Work
                 </Link>
               </li>
-              {latest && (
-                <li>
-                  <Link href={`/artwork/${latest.slug}`} style={footerStyles.colItem}>
-                    Latest project
-                  </Link>
-                </li>
-              )}
+              <li>
+                <Link href="/home" style={footerStyles.colItem}>
+                  Featured
+                </Link>
+              </li>
               <li>
                 <Link href="/about" style={footerStyles.colItem}>
                   About
@@ -149,7 +143,7 @@ export async function SiteFooter() {
             <p style={footerStyles.colHead}>Studio</p>
             <ul style={footerStyles.colList}>
               <li>
-                <span style={footerStyles.colItem}>São Paulo, BR</span>
+                <span style={footerStyles.colItem}>Curitiba, BR</span>
               </li>
               <li>
                 <span style={footerStyles.colItem}>Illustration · Concept</span>
@@ -168,7 +162,12 @@ export async function SiteFooter() {
         <div style={footerStyles.mark}>Raul Barbosa</div>
       </div>
       <div style={footerStyles.legal}>
-        <span>© 2026 Luiz Hondo</span>
+        <span>
+          © 2026{' '}
+          <a href="https://luizhondo.com" target="_blank" rel="noreferrer" style={{ color: 'inherit' }}>
+            Luiz Hondo
+          </a>
+        </span>
         <span>All artwork made by the artist</span>
       </div>
     </footer>

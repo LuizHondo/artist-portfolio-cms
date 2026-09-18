@@ -119,7 +119,7 @@ export function ScreensaverGate({ slides, children }: { slides: string[]; childr
                   <div style={{ ...s.hbTag, fontSize: 16, letterSpacing: '0.08em' }}>Illustrator and Animator</div>
                 </div>
                 <div style={{ ...s.hbLinksRow, width: '100%', marginTop: 36 }}>
-                  {enabledSocials.slice(0, 4).map((social) => (
+                  {enabledSocials.map((social) => (
                     <a
                       key={social.key}
                       href={social.url}
