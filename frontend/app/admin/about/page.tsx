@@ -310,7 +310,12 @@ export default function AboutAdminPage() {
 			<div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 min-h-[calc(100vh-200px)]">
 				<AdminSidebar />
 				<main className="bg-white p-8 rounded-lg shadow-[0_4px_6px_rgba(0,0,0,0.1)]">
-					<h1 className="mt-0 text-[#333] mb-8">Manage About Me</h1>
+					<h1
+						className="mt-0 text-[#333] mb-8 text-4xl"
+						style={{ fontFamily: '"Permanent Marker", cursive' }}
+					>
+						Manage About Me
+					</h1>
 					<AboutFormContent />
 				</main>
 			</div>

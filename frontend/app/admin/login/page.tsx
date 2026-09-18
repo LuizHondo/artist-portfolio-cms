@@ -33,7 +33,12 @@ export default function LoginPage() {
 	return (
 		<div className="flex justify-center items-center min-h-screen bg-gray-50">
 			<div className="bg-white p-12 rounded-lg shadow-[0_10px_30px_rgba(0,0,0,0.2)] w-full max-w-[400px]">
-				<h1 className="text-[2rem] mb-2 text-[#333]">Admin Login</h1>
+				<h1
+					className="text-[2.5rem] mb-2 text-[#333]"
+					style={{ fontFamily: '"Permanent Marker", cursive' }}
+				>
+					Admin Login
+				</h1>
 				<p className="text-[#666] mb-8">Raul Barbosa Neto Portfolio</p>
 
 				{error && (
