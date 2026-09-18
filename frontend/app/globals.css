@@ -19,6 +19,19 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Page-transition crossfade (React ViewTransition, wired in lib/design/shared.tsx's Paper) */
+::view-transition {
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
 body {
   background: var(--background);
   background-image:

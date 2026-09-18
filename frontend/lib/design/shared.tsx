@@ -1,21 +1,27 @@
 'use client';
 
-import type { CSSProperties, ReactNode } from 'react';
+import { ViewTransition, type CSSProperties, type ReactNode } from 'react';
 import { SiArtstation, SiBehance, SiBluesky, SiInstagram, SiX, SiYoutube } from '@icons-pack/react-simple-icons';
 import { COLORS } from '@/lib/theme';
 
+// Paper wraps every public page's content, so it's the one place a
+// ViewTransition needs wiring for a route-wide crossfade (React's default
+// enter/exit) on navigation — see app/globals.css for the reduced-motion
+// and pointer-events rules that go with it.
 export function Paper({ children, style }: { children: ReactNode; style?: CSSProperties }) {
   return (
-    <div
-      style={{
-        background: COLORS.background,
-        color: COLORS.ink,
-        fontFamily: '"Newsreader", Georgia, serif',
-        ...style,
-      }}
-    >
-      {children}
-    </div>
+    <ViewTransition>
+      <div
+        style={{
+          background: COLORS.background,
+          color: COLORS.ink,
+          fontFamily: '"Newsreader", Georgia, serif',
+          ...style,
+        }}
+      >
+        {children}
+      </div>
+    </ViewTransition>
   );
 }
 
