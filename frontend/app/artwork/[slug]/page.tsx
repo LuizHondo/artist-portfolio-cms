@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 import { projV2Styles as s } from "@/components/artwork/artworkStyles";
+import { ImageLightbox } from "@/components/artwork/ImageLightbox";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { getArtworks, getBySlug } from "@/lib/api/artworks";
@@ -65,69 +66,71 @@ export default async function ArtworkPage({
 				</div>
 			</div>
 
-			<div style={s.heroWrap} className="mx-5 pb-10 md:mx-16 md:pb-[60px]">
-				<div>
-					{/* biome-ignore lint/performance/noImgElement: arbitrary admin-entered URL */}
-					<img
-						src={artwork.coverImage}
-						alt={artwork.title}
-						style={s.heroPlateImg}
-					/>
-					<div style={s.heroCaption}>{artwork.title} — cover</div>
+			<ImageLightbox>
+				<div style={s.heroWrap} className="mx-5 pb-10 md:mx-16 md:pb-[60px]">
+					<div>
+						{/* biome-ignore lint/performance/noImgElement: arbitrary admin-entered URL */}
+						<img
+							src={artwork.coverImage}
+							alt={artwork.title}
+							style={s.heroPlateImg}
+						/>
+						<div style={s.heroCaption}>{artwork.title} — cover</div>
+					</div>
 				</div>
-			</div>
 
-			<div className="px-5 md:px-16" style={{ maxWidth: 980 }}>
-				<p
-					className="text-[19px] md:text-[27px]"
-					style={{ lineHeight: 1.5, letterSpacing: "-0.005em" }}
+				<div className="px-5 md:px-16" style={{ maxWidth: 980 }}>
+					<p
+						className="text-[19px] md:text-[27px]"
+						style={{ lineHeight: 1.5, letterSpacing: "-0.005em" }}
+					>
+						{artwork.summary}
+					</p>
+				</div>
+
+				<div
+					style={s.entriesWrap}
+					className="gap-12 px-5 pt-12 pb-8 md:gap-[88px] md:px-16 md:pt-24 md:pb-10"
 				>
-					{artwork.summary}
-				</p>
-			</div>
-
-			<div
-				style={s.entriesWrap}
-				className="gap-12 px-5 pt-12 pb-8 md:gap-[88px] md:px-16 md:pt-24 md:pb-10"
-			>
-				{artwork.entries.map((entry) => {
-					return (
-						<div
-							key={entry.id}
-							className="grid grid-cols-1 gap-6 md:gap-10 md:[grid-template-columns:repeat(var(--cols),1fr)]"
-							style={{ "--cols": entry.columns } as CSSProperties}
-						>
-							{entry.images.map((image) => (
-								<div
-									key={image.url}
-									style={{
-										minWidth: 0,
-										display: "flex",
-										flexDirection: "column",
-									}}
-								>
-									<div style={s.entryTextPad}>
-										<div style={s.entryNum}>
-											{String(entry.displayOrder).padStart(2, "0")} ·{" "}
-											{entry.columns} COL
+					{artwork.entries.map((entry) => {
+						return (
+							<div
+								key={entry.id}
+								className="grid grid-cols-1 gap-6 md:gap-10 md:[grid-template-columns:repeat(var(--cols),1fr)]"
+								style={{ "--cols": entry.columns } as CSSProperties}
+							>
+								{entry.images.map((image) => (
+									<div
+										key={image.url}
+										style={{
+											minWidth: 0,
+											display: "flex",
+											flexDirection: "column",
+										}}
+									>
+										<div style={s.entryTextPad}>
+											<div style={s.entryNum}>
+												{String(entry.displayOrder).padStart(2, "0")} ·{" "}
+												{entry.columns} COL
+											</div>
+											<h3 style={s.entryTitle}>{image.title}</h3>
+											<div style={s.entryDesc}>
+												<MarkText text={image.description} />
+											</div>
 										</div>
-										<h3 style={s.entryTitle}>{image.title}</h3>
-										<div style={s.entryDesc}>
-											<MarkText text={image.description} />
-										</div>
+										{/* biome-ignore lint/performance/noImgElement: arbitrary admin-entered URL */}
+										<img
+											src={image.url}
+											alt={image.title}
+											style={{ ...s.entryImg, marginTop: "auto" }}
+										/>
 									</div>
-									{/* biome-ignore lint/performance/noImgElement: arbitrary admin-entered URL */}
-									<img
-										src={image.url}
-										alt={image.title}
-										style={{ ...s.entryImg, marginTop: "auto" }}
-									/>
-								</div>
-							))}
-						</div>
-					);
-				})}
-			</div>
+								))}
+							</div>
+						);
+					})}
+				</div>
+			</ImageLightbox>
 
 			<section style={s.finale} className="px-5 py-16 md:px-16 md:py-[120px]">
 				<div style={s.finaleRule} />
