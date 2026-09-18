@@ -116,7 +116,7 @@ export function Home({ artworks }: { artworks: Artwork[] }) {
             />
           </div>
           <div style={{ textAlign: 'center', marginTop: 16 }}>
-            <Link href="/gallery" style={{ ...s.tierNote, textDecoration: 'underline' }}>
+            <Link href="/artworks" style={{ ...s.tierNote, textDecoration: 'underline' }}>
               Browse the full archive
             </Link>
           </div>

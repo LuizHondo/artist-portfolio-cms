@@ -8,7 +8,7 @@ import { useIsMobile } from '@/lib/useIsMobile';
 import type { Artwork } from '@/lib/types';
 import { homeV1Styles as s } from '@/components/home/homeStyles';
 
-export function Gallery({ artworks }: { artworks: Artwork[] }) {
+export function Artworks({ artworks }: { artworks: Artwork[] }) {
   const isMobile = useIsMobile();
   const [filter, setFilter] = useState('All');
 
@@ -19,7 +19,7 @@ export function Gallery({ artworks }: { artworks: Artwork[] }) {
   return (
     <section style={{ ...s.section, ...(isMobile ? { padding: '56px 20px' } : {}) }}>
       <div style={s.sectionHead}>
-        <h2 style={s.sectionTitle}>Gallery</h2>
+        <h2 style={s.sectionTitle}>Artworks</h2>
         {artworks.length > 0 && (
           <div style={s.sectionSub}>
             {Math.min(...years)} — {Math.max(...years)} · {artworks.length} artworks

@@ -2,12 +2,12 @@ import Link from 'next/link';
 import { COLORS } from '@/lib/theme';
 import { LogoMark } from '@/components/LogoMark';
 
-// Shared Home / Gallery / About nav, matching home-v1.jsx's NavV1 link set
+// Shared Home / Artworks / About nav, matching home-v1.jsx's NavV1 link set
 // and active-state logic. Home floats transparent over the hero (`hero`);
 // every other page uses the artwork pages' static bordered bar (`bar`).
 const links = [
   { label: 'Home', href: '/home' },
-  { label: 'Gallery', href: '/gallery' },
+  { label: 'Artworks', href: '/artworks' },
   { label: 'About', href: '/about' },
 ] as const;
 
