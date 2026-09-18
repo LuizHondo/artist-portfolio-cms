@@ -12,6 +12,7 @@ dotenv.config();
 import artworkRoutes from './modules/artworks/artwork.routes.js';
 import tagRoutes from './modules/tags/tag.routes.js';
 import adminRoutes from './modules/admin/admin.routes.js';
+import aboutRoutes from './modules/about/about.routes.js';
 
 // Error handling
 interface ErrorWithStatus extends Error {
@@ -41,6 +42,7 @@ app.get('/health', (req: Request, res: Response) => {
 app.use('/api/artworks', artworkRoutes);
 app.use('/api/tags', tagRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/about', aboutRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {

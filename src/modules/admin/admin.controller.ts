@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import AdminService from './admin.service.js';
 import { LoginSchema, ChangePasswordSchema } from '../../shared/schemas.js';
 import ArtworkController from '../artworks/artwork.controller.js';
+import AboutController from '../about/about.controller.js';
 
 export class AdminController {
   // POST /api/admin/login - Admin login
@@ -76,6 +77,11 @@ export class AdminController {
   // DELETE /api/admin/entries/:entryId/images/:position - Delete an entry image
   async deleteImage(req: Request, res: Response) {
     return ArtworkController.deleteImage(req, res);
+  }
+
+  // PUT /api/admin/about - Update about content
+  async updateAbout(req: Request, res: Response) {
+    return AboutController.updateAbout(req, res);
   }
 
   // POST /api/admin/change-password - Change password

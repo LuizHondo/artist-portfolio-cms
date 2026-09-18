@@ -84,6 +84,19 @@ model ArtworkTag {
   @@map("artwork_tags")
 }
 
+// About page content (singleton row, id is always "singleton")
+model About {
+  id          String   @id @default("singleton")
+  tagline     String
+  bio         String   // JSON string array of paragraphs
+  heroImage   String
+  disciplines String   // JSON string array
+  colophon    String   // JSON array of { key, value }
+  updatedAt   DateTime @updatedAt
+
+  @@map("about")
+}
+
 // Admin user for authentication
 model AdminUser {
   id        String   @id @default(cuid())

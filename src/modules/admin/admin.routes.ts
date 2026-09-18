@@ -16,6 +16,9 @@ router.post('/artworks', authMiddleware, AdminController.createArtwork);
 router.put('/artworks/:id', authMiddleware, AdminController.updateArtwork);
 router.delete('/artworks/:id', authMiddleware, AdminController.deleteArtwork);
 
+// About content management (admin only)
+router.put('/about', authMiddleware, AdminController.updateAbout);
+
 // Process entries management (admin only)
 router.post('/artworks/:id/entries', authMiddleware, AdminController.createEntry);
 router.put('/entries/:id', authMiddleware, AdminController.updateEntry);

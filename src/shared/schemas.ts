@@ -1,5 +1,16 @@
 import { z } from 'zod';
 
+// About page schema
+export const UpdateAboutSchema = z.object({
+  tagline: z.string().min(1),
+  bio: z.array(z.string().min(1)).min(1),
+  heroImage: z.string().url(),
+  disciplines: z.array(z.string().min(1)).min(1),
+  colophon: z
+    .array(z.object({ key: z.string().min(1), value: z.string().min(1) }))
+    .min(1),
+});
+
 // Artwork schemas
 export const CreateArtworkSchema = z.object({
   title: z.string().min(3),
@@ -65,3 +76,4 @@ export type ArtworkEntryInput = z.infer<typeof ArtworkEntrySchema>;
 export type UpdateArtworkEntryInput = z.infer<typeof UpdateArtworkEntrySchema>;
 export type LoginInput = z.infer<typeof LoginSchema>;
 export type ChangePasswordInput = z.infer<typeof ChangePasswordSchema>;
+export type UpdateAboutInput = z.infer<typeof UpdateAboutSchema>;
