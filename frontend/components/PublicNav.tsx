@@ -24,7 +24,7 @@ const logoWrap = {
 };
 const logoScript = {
   fontFamily: '"Permanent Marker", cursive',
-  fontSize: 20,
+  fontSize: 64,
   letterSpacing: 0,
   textTransform: 'none' as const,
   marginRight: 12,
@@ -84,7 +84,7 @@ export function PublicNav({ active, variant, locked = false }: { active?: Active
       <Link
         href="/home"
         className="logo-link"
-        style={{ ...logoWrap, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+        style={{ ...logoWrap, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',gap:24 }}
         tabIndex={locked ? -1 : undefined}
       >
         <LogoMark size={100} />

@@ -63,6 +63,8 @@ body {
 .logo-mark {
   overflow: hidden;
   border-bottom: 3px solid #343434;
+  position: relative;
+  bottom: 16px;
 }
 .logo-mark-img {
   display: block;
