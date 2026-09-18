@@ -22,9 +22,7 @@ const footerStyles = {
   },
   ctaLink: {
     display: 'block',
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
-    fontWeight: 500,
-    fontStyle: 'italic' as const,
+    fontFamily: '"Permanent Marker", cursive',
     fontSize: 'clamp(36px,5.4cqw,82px)',
     lineHeight: 0.94,
     letterSpacing: '-0.018em',
@@ -54,7 +52,7 @@ const footerStyles = {
   },
   colList: { display: 'flex', flexDirection: 'column' as const, gap: 9, margin: 0, padding: 0, listStyle: 'none' },
   colItem: {
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontFamily: '"Permanent Marker", cursive',
     fontSize: 17,
     fontWeight: 400,
     letterSpacing: 0,
@@ -69,11 +67,10 @@ const footerStyles = {
   gap: { height: 'clamp(120px,14cqw,220px)' },
   markRow: { padding: '0 0 clamp(18px,2cqw,34px)' },
   mark: {
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontFamily: '"Permanent Marker", cursive',
     fontSize: '15.4cqw',
     lineHeight: 0.78,
     letterSpacing: '-0.018em',
-    fontWeight: 500,
     whiteSpace: 'nowrap' as const,
     margin: 0,
     width: '108cqw',
@@ -134,11 +131,6 @@ export async function SiteFooter() {
                   About
                 </Link>
               </li>
-              <li>
-                <Link href="/links" style={footerStyles.colItem}>
-                  Links
-                </Link>
-              </li>
             </ul>
           </div>
           <div>
@@ -176,8 +168,8 @@ export async function SiteFooter() {
         <div style={footerStyles.mark}>Raul Barbosa</div>
       </div>
       <div style={footerStyles.legal}>
-        <span>© 2026 Raul Barbosa</span>
-        <span>All artwork by the artist</span>
+        <span>© 2026 Luiz Hondo</span>
+        <span>All artwork made by the artist</span>
       </div>
     </footer>
   );

@@ -32,10 +32,9 @@ export const projV2Styles: Record<string, CSSProperties> = {
     marginBottom: 12,
   },
   bigTitle: {
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontFamily: '"Permanent Marker", cursive',
     lineHeight: 0.88,
     margin: 0,
-    fontWeight: 500,
     letterSpacing: '-0.018em',
   },
   meta: {
@@ -80,9 +79,8 @@ export const projV2Styles: Record<string, CSSProperties> = {
     marginBottom: 8,
   },
   entryTitle: {
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontFamily: '"Permanent Marker", cursive',
     fontSize: 26,
-    fontWeight: 500,
     letterSpacing: '-0.01em',
     margin: '0 0 10px',
     overflowWrap: 'break-word',
@@ -101,25 +99,22 @@ export const projV2Styles: Record<string, CSSProperties> = {
     opacity: 0.6,
   },
   finaleBig: {
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontFamily: '"Permanent Marker", cursive',
     lineHeight: 0.84,
     margin: '28px 0',
     letterSpacing: '-0.018em',
-    fontWeight: 500,
-    fontStyle: 'italic',
   },
 
   footer: { display: 'grid' },
   footTitle: {
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontFamily: '"Permanent Marker", cursive',
     fontSize: 36,
-    fontWeight: 500,
     letterSpacing: '-0.012em',
     margin: '0 0 26px',
   },
   relGrid: { display: 'grid', gap: 16 },
   relCard: { cursor: 'pointer', textDecoration: 'none', color: 'inherit', display: 'block' },
-  relCap: { fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif', fontSize: 17, fontWeight: 400, marginTop: 10 },
+  relCap: { fontFamily: '"Permanent Marker", cursive', fontSize: 17, fontWeight: 400, marginTop: 10 },
 
   contact: { background: COLORS.white, padding: 36, border: '1px solid rgba(26,23,20,0.2)' },
   contactNote: {
@@ -131,7 +126,7 @@ export const projV2Styles: Record<string, CSSProperties> = {
     display: 'inline-block',
     marginBottom: 18,
   },
-  contactEmail: { fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif', fontSize: 22, fontWeight: 400, fontStyle: 'italic', marginBottom: 24 },
+  contactEmail: { fontFamily: '"Permanent Marker", cursive', fontSize: 22, fontWeight: 400, marginBottom: 24 },
   socials: { display: 'flex', gap: 12, marginBottom: 24 },
   socialBtn: { width: 40, height: 40, borderRadius: 0, border: '1px solid rgba(26,23,20,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
   contactBtn: {

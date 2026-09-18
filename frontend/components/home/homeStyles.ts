@@ -45,11 +45,10 @@ export const homeV1Styles: Record<string, CSSProperties> = {
   },
   hbColumn: { display: 'flex', flexDirection: 'column' },
   hbName: {
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontFamily: '"Permanent Marker", cursive',
     lineHeight: 0.9,
     margin: 0,
     letterSpacing: '-0.016em',
-    fontWeight: 500,
   },
   hbTag: {
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
@@ -148,12 +147,11 @@ export const homeV1Styles: Record<string, CSSProperties> = {
     marginBottom: 32,
   },
   sectionTitle: {
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontFamily: '"Permanent Marker", cursive',
     fontSize: 72,
     margin: 0,
     lineHeight: 0.9,
     letterSpacing: '-0.016em',
-    fontWeight: 500,
   },
   sectionSub: {
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
@@ -207,9 +205,8 @@ export const homeV1Styles: Record<string, CSSProperties> = {
     maxWidth: '46ch',
   },
   cardTitle: {
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontFamily: '"Permanent Marker", cursive',
     margin: 0,
-    fontWeight: 600,
     letterSpacing: '-0.01em',
   },
 
@@ -256,19 +253,6 @@ export const homeV1Styles: Record<string, CSSProperties> = {
     background: 'rgba(10,8,5,0.35)',
   },
   mobileLinkLeft: { display: 'flex', alignItems: 'center', gap: 14 },
-  mobileAll: {
-    textAlign: 'center',
-    fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
-    fontSize: 12,
-    letterSpacing: '0.2em',
-    textTransform: 'uppercase',
-    fontWeight: 700,
-    color: COLORS.cream,
-    cursor: 'pointer',
-    marginTop: 10,
-    textDecoration: 'none',
-    display: 'block',
-  },
 
   tierHead: {
     display: 'flex',

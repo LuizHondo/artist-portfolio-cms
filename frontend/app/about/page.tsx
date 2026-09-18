@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Paper, Icon } from '@/lib/design/shared';
 import { PublicNav } from '@/components/PublicNav';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -31,12 +30,11 @@ const s = {
   heroImg: { width: '100%', height: '100%', objectFit: 'cover' as const, display: 'block' },
   heroRight: { padding: '72px 64px 72px', display: 'flex', flexDirection: 'column' as const, justifyContent: 'center' },
   bigName: {
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontFamily: '"Permanent Marker", cursive',
     fontSize: 88,
     lineHeight: 0.88,
     margin: 0,
     letterSpacing: '-0.018em',
-    fontWeight: 500,
   },
   bigTag: {
     fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
@@ -51,23 +49,22 @@ const s = {
   bioP: { marginBottom: 20 },
   body: { display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 64, padding: '96px 56px', borderTop: '1px solid rgba(26,23,20,0.12)' },
   h2: {
-    fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif',
+    fontFamily: '"Permanent Marker", cursive',
     fontSize: 36,
     margin: '0 0 28px',
     lineHeight: 1,
     letterSpacing: '-0.012em',
-    fontWeight: 500,
   },
   skills: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 32px' },
   skillRow: { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px dotted rgba(26,23,20,0.25)' },
-  skillName: { fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif', fontSize: 19, fontWeight: 400 },
+  skillName: { fontFamily: '"Permanent Marker", cursive', fontSize: 19, fontWeight: 400 },
   skillNum: { fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif', fontSize: 10, letterSpacing: '0.14em', opacity: 0.45 },
   colophon: { fontSize: 17, lineHeight: 1.65 },
   colophonRow: { display: 'grid', gridTemplateColumns: '120px 1fr', padding: '10px 0', borderBottom: '1px solid rgba(26,23,20,0.12)' },
   colKey: { fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif', fontSize: 11, letterSpacing: '0.15em', opacity: 0.55, textTransform: 'uppercase' as const },
-  colVal: { fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif', fontSize: 17, fontWeight: 400 },
+  colVal: { fontFamily: '"Permanent Marker", cursive', fontSize: 17, fontWeight: 400 },
   cta: { padding: '64px 56px 96px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(26,23,20,0.12)' },
-  ctaText: { fontFamily: '"Gambetta", "Hoefler Text", Georgia, serif', fontSize: 44, margin: 0, fontWeight: 500, fontStyle: 'italic' as const, letterSpacing: '-0.014em' },
+  ctaText: { fontFamily: '"Permanent Marker", cursive', fontSize: 44, margin: 0, letterSpacing: '-0.014em' },
   ctaBtns: { display: 'flex', gap: 12 },
   btnDark: {
     display: 'inline-flex',
@@ -83,22 +80,6 @@ const s = {
     textTransform: 'uppercase' as const,
     fontWeight: 700,
     cursor: 'pointer',
-  },
-  btnLight: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 12,
-    padding: '14px 26px',
-    background: 'transparent',
-    color: COLORS.ink,
-    border: `1px solid ${COLORS.ink}`,
-    fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
-    fontSize: 11,
-    letterSpacing: '0.18em',
-    textTransform: 'uppercase' as const,
-    fontWeight: 700,
-    cursor: 'pointer',
-    textDecoration: 'none',
   },
   socialChip: {
     display: 'inline-flex',
@@ -234,9 +215,6 @@ export default function AboutPage() {
       <section style={s.cta}>
         <h3 style={s.ctaText}>Want the long version?</h3>
         <div style={s.ctaBtns}>
-          <Link href="/links" style={s.btnLight}>
-            All my links →
-          </Link>
           <a href={`mailto:${CONTACT_EMAIL}`} style={{ ...s.btnDark, textDecoration: 'none' }}>
             Get in touch <Icon name="arrow" size={14} color={COLORS.cream} />
           </a>

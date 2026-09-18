@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans } from "next/font/google";
+import { IBM_Plex_Sans, Permanent_Marker } from "next/font/google";
 import ClickSpark from "@/components/ClickSpark";
 import { ScreensaverGate } from "@/components/ScreensaverGate";
 import { getArtworks } from "@/lib/api/artworks";
 import { COLORS } from "@/lib/theme";
 import "./globals.css";
 
-// Gambetta isn't in next/font/google's bundled font list (verified: build
-// fails with "Unknown font"), so it's loaded the same way the source design
-// loads it — a Google Fonts CSS2 <link> — while IBM Plex Sans still goes
-// through next/font/google for self-hosting/optimization.
 const ibmPlexSans = IBM_Plex_Sans({
   variable: "--font-ibm-plex-sans",
   subsets: ["latin"],
   style: ["normal", "italic"],
   weight: ["300", "400", "500", "600"],
+});
+
+const permanentMarker = Permanent_Marker({
+  variable: "--font-permanent-marker",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -36,17 +38,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${ibmPlexSans.variable} h-full antialiased`}
+      className={`${ibmPlexSans.variable} ${permanentMarker.variable} h-full antialiased`}
       data-scroll-behavior="smooth"
     >
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Gambetta:ital,wght@0,300..700;1,300..700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body className="min-h-full flex flex-col">
         <ClickSpark sparkColor={COLORS.white} sparkSize={10} sparkRadius={15} sparkCount={8} duration={400}>
           <ScreensaverGate slides={slides}>{children}</ScreensaverGate>

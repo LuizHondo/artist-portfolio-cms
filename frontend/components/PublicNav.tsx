@@ -88,7 +88,7 @@ export function PublicNav({ active, variant, locked = false }: { active?: Active
       >
         <LogoMark size={100} />
         <span className="logo-wordmark">
-          <span style={logoScript}>Raul Barbosa</span>Illustrator &amp; Animator
+          <span style={logoScript}>Raul Barbosa</span>
         </span>
       </Link>
       <div style={navLinksRow}>

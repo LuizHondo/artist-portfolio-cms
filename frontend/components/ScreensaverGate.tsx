@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Icon } from '@/lib/design/shared';
 import { enabledSocials } from '@/lib/social-links';
@@ -159,9 +158,6 @@ export function ScreensaverGate({ slides, children }: { slides: string[]; childr
                   <Icon name="arrow" size={18} color={COLORS.cream} />
                 </a>
               ))}
-              <Link href="/links" style={{ ...s.mobileAll, opacity: contentOpacity, pointerEvents: 'auto', transition: 'opacity .8s' }}>
-                all my links →
-              </Link>
             </div>
           ) : (
             <div style={{ ...s.heroBottomRight, opacity: 1, transition: 'opacity .8s', width: 364, height: 114 }}>

@@ -12,6 +12,7 @@ export function LogoMark({ size = 22 }: { size?: number }) {
         width={size}
         height={size}
         className="logo-mark-img"
+        style={{ width: size, height: size }}
         priority
       />
     </div>
