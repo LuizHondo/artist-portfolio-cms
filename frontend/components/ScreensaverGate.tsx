@@ -72,7 +72,7 @@ export function ScreensaverGate({ slides, children }: { slides: string[]; childr
       return;
     }
     setLocked(false);
-    router.push('/artworks');
+    router.push('/home');
   };
 
   const contentOpacity = 1;
@@ -146,7 +146,7 @@ export function ScreensaverGate({ slides, children }: { slides: string[]; childr
                 <h1 style={{ ...s.hbName, fontSize: 44, fontWeight: 800, whiteSpace: 'nowrap', textShadow: '0 3px 18px rgba(0,0,0,0.5)' }}>Raul Barbosa</h1>
                 <div style={{ ...s.hbTag, fontSize: 13, letterSpacing: '0.08em' }}>Illustrator and Animator</div>
               </div>
-              <a href="/artworks" style={{ ...s.mobileEnter, minHeight: 64, opacity: 1, pointerEvents: 'auto', transition: 'opacity .8s' }} onClick={(e) => { e.preventDefault(); enter(); }}>
+              <a href="/home" style={{ ...s.mobileEnter, minHeight: 64, opacity: 1, pointerEvents: 'auto', transition: 'opacity .8s' }} onClick={(e) => { e.preventDefault(); enter(); }}>
                 Enter Portfolio Site
               </a>
               {enabledSocials.map((social) => (
@@ -163,7 +163,7 @@ export function ScreensaverGate({ slides, children }: { slides: string[]; childr
             <div style={{ ...s.heroBottomRight, opacity: 1, transition: 'opacity .8s', width: 364, height: 114 }}>
               <div style={s.hbrKicker} />
               <div style={{ display: 'flex', alignItems: 'center', width: '100%', height: '100%', justifyContent: 'center' }}>
-                <a href="/artworks" style={{ ...s.hbrEnterBtn, width: 360, height: 64, justifyContent: 'center', fontSize: 13, boxShadow: '0 8px 28px rgba(0,0,0,0.28)', opacity: 1, pointerEvents: 'auto', transition: 'opacity .8s' }} onClick={(e) => { e.preventDefault(); enter(); }}>
+                <a href="/home" style={{ ...s.hbrEnterBtn, width: 360, height: 64, justifyContent: 'center', fontSize: 13, boxShadow: '0 8px 28px rgba(0,0,0,0.28)', opacity: 1, pointerEvents: 'auto', transition: 'opacity .8s' }} onClick={(e) => { e.preventDefault(); enter(); }}>
                   Enter Portfolio Site
                 </a>
               </div>

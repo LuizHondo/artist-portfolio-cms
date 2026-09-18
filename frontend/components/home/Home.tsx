@@ -9,7 +9,7 @@ import type { Artwork } from '@/lib/types';
 import { homeV1Styles as s } from './homeStyles';
 import ParallaxCarousel from './ParallaxCarousel';
 
-export function Gallery({ artworks }: { artworks: Artwork[] }) {
+export function Home({ artworks }: { artworks: Artwork[] }) {
   const isMobile = useIsMobile();
   const [filter, setFilter] = useState('All');
 
@@ -116,7 +116,7 @@ export function Gallery({ artworks }: { artworks: Artwork[] }) {
             />
           </div>
           <div style={{ textAlign: 'center', marginTop: 16 }}>
-            <Link href="/artworks" style={{ ...s.tierNote, textDecoration: 'underline' }}>
+            <Link href="/gallery" style={{ ...s.tierNote, textDecoration: 'underline' }}>
               Browse the full archive
             </Link>
           </div>

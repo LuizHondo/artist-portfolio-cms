@@ -19,9 +19,9 @@ export default async function ArtworkPage({ params }: { params: Promise<{ slug: 
 
   return (
     <Paper style={s.page}>
-      <PublicNav active="Artworks" variant="bar" />
+      <PublicNav active="Gallery" variant="bar" />
 
-      <Link href="/artworks" style={s.back} className="px-5 pt-6 md:px-16 md:pt-7">
+      <Link href="/gallery" style={s.back} className="px-5 pt-6 md:px-16 md:pt-7">
         <Icon name="arrow-left" size={16} /> back to all artworks
       </Link>
 
