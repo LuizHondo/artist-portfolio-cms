@@ -1,30 +1,34 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { Renderer, Triangle, Program, Mesh, Texture } from 'ogl';
-import { gsap } from 'gsap';
+import { gsap } from "gsap";
+import { Mesh, Program, Renderer, Texture, Triangle } from "ogl";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import './MorphSlider.css';
+import "./MorphSlider.css";
 
 const TRANSITIONS = { melt: 0, ripple: 1, shear: 2, swirl: 3 };
 
 const DEFAULT_ITEMS = [
-  {
-    image: 'https://images.unsplash.com/photo-1782977389500-dd7adad33ebe?q=80&w=1600&auto=format&fit=crop',
-    caption: 'One'
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1781499455083-6ccc3beb20cd?q=80&w=1600&auto=format&fit=crop',
-    caption: 'Two'
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1776394254711-4a0d7345269a?q=80&w=1600&auto=format&fit=crop',
-    caption: 'Three'
-  },
-  {
-    image: 'https://images.unsplash.com/photo-1781242629922-6f39cc3671cd?q=80&w=1600&auto=format&fit=crop',
-    caption: 'Four'
-  }
+	{
+		image:
+			"https://images.unsplash.com/photo-1782977389500-dd7adad33ebe?q=80&w=1600&auto=format&fit=crop",
+		caption: "One",
+	},
+	{
+		image:
+			"https://images.unsplash.com/photo-1781499455083-6ccc3beb20cd?q=80&w=1600&auto=format&fit=crop",
+		caption: "Two",
+	},
+	{
+		image:
+			"https://images.unsplash.com/photo-1776394254711-4a0d7345269a?q=80&w=1600&auto=format&fit=crop",
+		caption: "Three",
+	},
+	{
+		image:
+			"https://images.unsplash.com/photo-1781242629922-6f39cc3671cd?q=80&w=1600&auto=format&fit=crop",
+		caption: "Four",
+	},
 ];
 
 const vertexShader = `
@@ -191,498 +195,552 @@ void main() {
 `;
 
 function makeFallbackTexture(gl) {
-  const size = 4;
-  const data = new Uint8Array(size * size * 4);
-  for (let i = 0; i < size * size; i++) {
-    data[i * 4] = 24;
-    data[i * 4 + 1] = 24;
-    data[i * 4 + 2] = 28;
-    data[i * 4 + 3] = 255;
-  }
-  return new Texture(gl, { image: data, width: size, height: size, generateMipmaps: false });
+	const size = 4;
+	const data = new Uint8Array(size * size * 4);
+	for (let i = 0; i < size * size; i++) {
+		data[i * 4] = 24;
+		data[i * 4 + 1] = 24;
+		data[i * 4 + 2] = 28;
+		data[i * 4 + 3] = 255;
+	}
+	return new Texture(gl, {
+		image: data,
+		width: size,
+		height: size,
+		generateMipmaps: false,
+	});
 }
 
 function hexToRgb(hex) {
-  let h = (hex || '#000000').replace('#', '');
-  if (h.length === 3) {
-    h = h
-      .split('')
-      .map(c => c + c)
-      .join('');
-  }
-  const n = parseInt(h, 16);
-  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+	let h = (hex || "#000000").replace("#", "");
+	if (h.length === 3) {
+		h = h
+			.split("")
+			.map((c) => c + c)
+			.join("");
+	}
+	const n = parseInt(h, 16);
+	return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
 }
 
 class MorphEngine {
-  constructor(container, { items, startIndex, reducedMotion, getOptions, onIndexChange, dprCap }) {
-    this.container = container;
-    this.items = items;
-    this.getOptions = getOptions;
-    this.onIndexChange = onIndexChange;
-    this.reducedMotion = reducedMotion;
+	constructor(
+		container,
+		{ items, startIndex, reducedMotion, getOptions, onIndexChange, dprCap },
+	) {
+		this.container = container;
+		this.items = items;
+		this.getOptions = getOptions;
+		this.onIndexChange = onIndexChange;
+		this.reducedMotion = reducedMotion;
 
-    this.current = startIndex;
-    this.animating = false;
-    this.dragging = false;
-    this.dragDir = 0;
-    this.shownIndex = startIndex;
-    this.tween = null;
+		this.current = startIndex;
+		this.animating = false;
+		this.dragging = false;
+		this.dragDir = 0;
+		this.shownIndex = startIndex;
+		this.tween = null;
 
-    this.renderer = new Renderer({
-      alpha: false,
-      antialias: true,
-      dpr: Math.min(window.devicePixelRatio || 1, dprCap)
-    });
-    this.gl = this.renderer.gl;
-    this.gl.clearColor(0.05, 0.05, 0.06, 1);
+		this.renderer = new Renderer({
+			alpha: false,
+			antialias: true,
+			dpr: Math.min(window.devicePixelRatio || 1, dprCap),
+		});
+		this.gl = this.renderer.gl;
+		this.gl.clearColor(0.05, 0.05, 0.06, 1);
 
-    this.canvas = this.gl.canvas;
-    this.canvas.className = 'morph-slider-canvas';
-    container.appendChild(this.canvas);
+		this.canvas = this.gl.canvas;
+		this.canvas.className = "morph-slider-canvas";
+		container.appendChild(this.canvas);
 
-    this.geometry = new Triangle(this.gl);
+		this.geometry = new Triangle(this.gl);
 
-    this.textures = this.items.map(() => makeFallbackTexture(this.gl));
-    this.sizes = this.items.map(() => [1, 1]);
+		this.textures = this.items.map(() => makeFallbackTexture(this.gl));
+		this.sizes = this.items.map(() => [1, 1]);
 
-    const opts = this.getOptions();
-    this.program = new Program(this.gl, {
-      vertex: vertexShader,
-      fragment: fragmentShader,
-      uniforms: {
-        tCurrent: { value: this.textures[this.current] },
-        tNext: { value: this.textures[this.current] },
-        uResolution: { value: [1, 1] },
-        uCurrentSize: { value: this.sizes[this.current] },
-        uNextSize: { value: this.sizes[this.current] },
-        uProgress: { value: 0 },
-        uDir: { value: 1 },
-        uMode: { value: TRANSITIONS[opts.transition] ?? 0 },
-        uIntensity: { value: opts.intensity },
-        uScale: { value: opts.scale },
-        uAberration: { value: opts.aberration },
-        uDrift: { value: opts.drift },
-        uTime: { value: 0 },
-        uReduce: { value: reducedMotion ? 1 : 0 },
-        uPointer: { value: [0.5, 0.5] },
-        uOverlay: { value: hexToRgb(opts.overlayColor) }
-      }
-    });
+		const opts = this.getOptions();
+		this.program = new Program(this.gl, {
+			vertex: vertexShader,
+			fragment: fragmentShader,
+			uniforms: {
+				tCurrent: { value: this.textures[this.current] },
+				tNext: { value: this.textures[this.current] },
+				uResolution: { value: [1, 1] },
+				uCurrentSize: { value: this.sizes[this.current] },
+				uNextSize: { value: this.sizes[this.current] },
+				uProgress: { value: 0 },
+				uDir: { value: 1 },
+				uMode: { value: TRANSITIONS[opts.transition] ?? 0 },
+				uIntensity: { value: opts.intensity },
+				uScale: { value: opts.scale },
+				uAberration: { value: opts.aberration },
+				uDrift: { value: opts.drift },
+				uTime: { value: 0 },
+				uReduce: { value: reducedMotion ? 1 : 0 },
+				uPointer: { value: [0.5, 0.5] },
+				uOverlay: { value: hexToRgb(opts.overlayColor) },
+			},
+		});
 
-    this.mesh = new Mesh(this.gl, { geometry: this.geometry, program: this.program });
+		this.mesh = new Mesh(this.gl, {
+			geometry: this.geometry,
+			program: this.program,
+		});
 
-    this.boundContextLost = this.onContextLost.bind(this);
-    this.canvas.addEventListener('webglcontextlost', this.boundContextLost, false);
+		this.boundContextLost = this.onContextLost.bind(this);
+		this.canvas.addEventListener(
+			"webglcontextlost",
+			this.boundContextLost,
+			false,
+		);
 
-    this.resizeObserver = new ResizeObserver(() => this.resize());
-    this.resizeObserver.observe(container);
-    this.resize();
+		this.resizeObserver = new ResizeObserver(() => this.resize());
+		this.resizeObserver.observe(container);
+		this.resize();
 
-    this.loadTextures();
+		this.loadTextures();
 
-    this.boundLoop = this.loop.bind(this);
-    this.raf = requestAnimationFrame(this.boundLoop);
-  }
+		this.boundLoop = this.loop.bind(this);
+		this.raf = requestAnimationFrame(this.boundLoop);
+	}
 
-  loadTextures() {
-    this.items.forEach((item, index) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.src = item.image;
-      img.onload = () => {
-        const texture = new Texture(this.gl, { generateMipmaps: false });
-        texture.image = img;
-        this.textures[index] = texture;
-        this.sizes[index] = [img.naturalWidth || 1, img.naturalHeight || 1];
-        if (index === this.current) {
-          this.program.uniforms.tCurrent.value = texture;
-          this.program.uniforms.uCurrentSize.value = this.sizes[index];
-        }
-      };
-      img.onerror = () => {};
-    });
-  }
+	loadTextures() {
+		this.items.forEach((item, index) => {
+			const img = new Image();
+			img.crossOrigin = "anonymous";
+			img.src = item.image;
+			img.onload = () => {
+				const texture = new Texture(this.gl, { generateMipmaps: false });
+				texture.image = img;
+				this.textures[index] = texture;
+				this.sizes[index] = [img.naturalWidth || 1, img.naturalHeight || 1];
+				if (index === this.current) {
+					this.program.uniforms.tCurrent.value = texture;
+					this.program.uniforms.uCurrentSize.value = this.sizes[index];
+				}
+			};
+			img.onerror = () => {};
+		});
+	}
 
-  resize() {
-    const rect = this.container.getBoundingClientRect();
-    const w = Math.max(rect.width, 1);
-    const h = Math.max(rect.height, 1);
-    this.renderer.setSize(w, h);
-    this.program.uniforms.uResolution.value = [this.gl.canvas.width, this.gl.canvas.height];
-  }
+	resize() {
+		const rect = this.container.getBoundingClientRect();
+		const w = Math.max(rect.width, 1);
+		const h = Math.max(rect.height, 1);
+		this.renderer.setSize(w, h);
+		this.program.uniforms.uResolution.value = [
+			this.gl.canvas.width,
+			this.gl.canvas.height,
+		];
+	}
 
-  syncOptions() {
-    const opts = this.getOptions();
-    this.program.uniforms.uMode.value = TRANSITIONS[opts.transition] ?? 0;
-    this.program.uniforms.uIntensity.value = opts.intensity;
-    this.program.uniforms.uScale.value = opts.scale;
-    this.program.uniforms.uAberration.value = opts.aberration;
-    this.program.uniforms.uDrift.value = opts.drift;
-    this.program.uniforms.uOverlay.value = hexToRgb(opts.overlayColor);
-  }
+	syncOptions() {
+		const opts = this.getOptions();
+		this.program.uniforms.uMode.value = TRANSITIONS[opts.transition] ?? 0;
+		this.program.uniforms.uIntensity.value = opts.intensity;
+		this.program.uniforms.uScale.value = opts.scale;
+		this.program.uniforms.uAberration.value = opts.aberration;
+		this.program.uniforms.uDrift.value = opts.drift;
+		this.program.uniforms.uOverlay.value = hexToRgb(opts.overlayColor);
+	}
 
-  loop(t) {
-    this.program.uniforms.uTime.value = t * 0.001;
-    if (!this.dragging && !this.animating) this.syncOptions();
-    this.renderer.render({ scene: this.mesh });
-    this.raf = requestAnimationFrame(this.boundLoop);
-  }
+	loop(t) {
+		this.program.uniforms.uTime.value = t * 0.001;
+		if (!this.dragging && !this.animating) this.syncOptions();
+		this.renderer.render({ scene: this.mesh });
+		this.raf = requestAnimationFrame(this.boundLoop);
+	}
 
-  wrap(i) {
-    const n = this.items.length;
-    return ((i % n) + n) % n;
-  }
+	wrap(i) {
+		const n = this.items.length;
+		return ((i % n) + n) % n;
+	}
 
-  prepareNext(dir) {
-    const target = this.wrap(this.current + dir);
-    this.program.uniforms.tCurrent.value = this.textures[this.current];
-    this.program.uniforms.uCurrentSize.value = this.sizes[this.current];
-    this.program.uniforms.tNext.value = this.textures[target];
-    this.program.uniforms.uNextSize.value = this.sizes[target];
-    this.program.uniforms.uDir.value = dir;
-    return target;
-  }
+	prepareNext(dir) {
+		const target = this.wrap(this.current + dir);
+		this.program.uniforms.tCurrent.value = this.textures[this.current];
+		this.program.uniforms.uCurrentSize.value = this.sizes[this.current];
+		this.program.uniforms.tNext.value = this.textures[target];
+		this.program.uniforms.uNextSize.value = this.sizes[target];
+		this.program.uniforms.uDir.value = dir;
+		return target;
+	}
 
-  goTo(dir) {
-    if (this.animating || this.dragging || this.items.length < 2) return;
-    const opts = this.getOptions();
-    if (!opts.loop) {
-      const raw = this.current + dir;
-      if (raw < 0 || raw > this.items.length - 1) return;
-    }
-    this.syncOptions();
-    const target = this.prepareNext(dir);
-    this.animating = true;
-    this.announce(target);
-    const duration = this.reducedMotion ? Math.min(opts.duration, 0.4) : opts.duration;
-    this.tween = gsap.fromTo(
-      this.program.uniforms.uProgress,
-      { value: 0 },
-      {
-        value: 1,
-        duration,
-        ease: opts.ease,
-        onComplete: () => this.commit(target)
-      }
-    );
-  }
+	goTo(dir) {
+		if (this.animating || this.dragging || this.items.length < 2) return;
+		const opts = this.getOptions();
+		if (!opts.loop) {
+			const raw = this.current + dir;
+			if (raw < 0 || raw > this.items.length - 1) return;
+		}
+		this.syncOptions();
+		const target = this.prepareNext(dir);
+		this.animating = true;
+		this.announce(target);
+		const duration = this.reducedMotion
+			? Math.min(opts.duration, 0.4)
+			: opts.duration;
+		this.tween = gsap.fromTo(
+			this.program.uniforms.uProgress,
+			{ value: 0 },
+			{
+				value: 1,
+				duration,
+				ease: opts.ease,
+				onComplete: () => this.commit(target),
+			},
+		);
+	}
 
-  announce(index) {
-    if (index === this.shownIndex) return;
-    this.shownIndex = index;
-    if (this.onIndexChange) this.onIndexChange(index);
-  }
+	announce(index) {
+		if (index === this.shownIndex) return;
+		this.shownIndex = index;
+		if (this.onIndexChange) this.onIndexChange(index);
+	}
 
-  commit(target) {
-    this.current = target;
-    this.program.uniforms.tCurrent.value = this.textures[target];
-    this.program.uniforms.uCurrentSize.value = this.sizes[target];
-    this.program.uniforms.uProgress.value = 0;
-    this.animating = false;
-    this.tween = null;
-    this.announce(target);
-  }
+	commit(target) {
+		this.current = target;
+		this.program.uniforms.tCurrent.value = this.textures[target];
+		this.program.uniforms.uCurrentSize.value = this.sizes[target];
+		this.program.uniforms.uProgress.value = 0;
+		this.animating = false;
+		this.tween = null;
+		this.announce(target);
+	}
 
-  next() {
-    this.goTo(1);
-  }
+	next() {
+		this.goTo(1);
+	}
 
-  prev() {
-    this.goTo(-1);
-  }
+	prev() {
+		this.goTo(-1);
+	}
 
-  setPointer(x, y) {
-    this.program.uniforms.uPointer.value = [x, y];
-  }
+	setPointer(x, y) {
+		this.program.uniforms.uPointer.value = [x, y];
+	}
 
-  beginDrag() {
-    if (this.animating || this.items.length < 2) return false;
-    this.dragging = true;
-    this.dragDir = 0;
-    this.syncOptions();
-    return true;
-  }
+	beginDrag() {
+		if (this.animating || this.items.length < 2) return false;
+		this.dragging = true;
+		this.dragDir = 0;
+		this.syncOptions();
+		return true;
+	}
 
-  drag(ndx) {
-    if (!this.dragging) return;
-    const opts = this.getOptions();
-    const dir = ndx < 0 ? 1 : -1;
-    if (!opts.loop) {
-      const raw = this.current + dir;
-      if (raw < 0 || raw > this.items.length - 1) {
-        this.program.uniforms.uProgress.value = 0;
-        return;
-      }
-    }
-    if (dir !== this.dragDir) {
-      this.dragDir = dir;
-      this.prepareNext(dir);
-    }
-    const progress = Math.min(Math.abs(ndx), 1);
-    this.program.uniforms.uProgress.value = progress;
-    this.announce(progress > 0.5 ? this.wrap(this.current + dir) : this.current);
-  }
+	drag(ndx) {
+		if (!this.dragging) return;
+		const opts = this.getOptions();
+		const dir = ndx < 0 ? 1 : -1;
+		if (!opts.loop) {
+			const raw = this.current + dir;
+			if (raw < 0 || raw > this.items.length - 1) {
+				this.program.uniforms.uProgress.value = 0;
+				return;
+			}
+		}
+		if (dir !== this.dragDir) {
+			this.dragDir = dir;
+			this.prepareNext(dir);
+		}
+		const progress = Math.min(Math.abs(ndx), 1);
+		this.program.uniforms.uProgress.value = progress;
+		this.announce(
+			progress > 0.5 ? this.wrap(this.current + dir) : this.current,
+		);
+	}
 
-  endDrag() {
-    if (!this.dragging) return;
-    this.dragging = false;
-    const p = this.program.uniforms.uProgress.value;
-    if (this.dragDir === 0) return;
-    const target = this.wrap(this.current + this.dragDir);
-    const duration = this.reducedMotion ? 0.3 : 0.5;
-    this.animating = true;
-    if (p > 0.4) {
-      this.announce(target);
-      this.tween = gsap.to(this.program.uniforms.uProgress, {
-        value: 1,
-        duration,
-        ease: 'power2.out',
-        onComplete: () => this.commit(target)
-      });
-    } else {
-      this.announce(this.current);
-      this.tween = gsap.to(this.program.uniforms.uProgress, {
-        value: 0,
-        duration,
-        ease: 'power2.out',
-        onComplete: () => {
-          this.animating = false;
-          this.tween = null;
-        }
-      });
-    }
-  }
+	endDrag() {
+		if (!this.dragging) return;
+		this.dragging = false;
+		const p = this.program.uniforms.uProgress.value;
+		if (this.dragDir === 0) return;
+		const target = this.wrap(this.current + this.dragDir);
+		const duration = this.reducedMotion ? 0.3 : 0.5;
+		this.animating = true;
+		if (p > 0.4) {
+			this.announce(target);
+			this.tween = gsap.to(this.program.uniforms.uProgress, {
+				value: 1,
+				duration,
+				ease: "power2.out",
+				onComplete: () => this.commit(target),
+			});
+		} else {
+			this.announce(this.current);
+			this.tween = gsap.to(this.program.uniforms.uProgress, {
+				value: 0,
+				duration,
+				ease: "power2.out",
+				onComplete: () => {
+					this.animating = false;
+					this.tween = null;
+				},
+			});
+		}
+	}
 
-  onContextLost(e) {
-    e.preventDefault();
-    cancelAnimationFrame(this.raf);
-  }
+	onContextLost(e) {
+		e.preventDefault();
+		cancelAnimationFrame(this.raf);
+	}
 
-  destroy() {
-    cancelAnimationFrame(this.raf);
-    if (this.tween) this.tween.kill();
-    this.resizeObserver.disconnect();
-    this.canvas.removeEventListener('webglcontextlost', this.boundContextLost);
-    this.textures.forEach(tex => {
-      if (tex && tex.texture) this.gl.deleteTexture(tex.texture);
-    });
-    if (this.program && this.program.program) this.gl.deleteProgram(this.program.program);
-    const ext = this.gl.getExtension('WEBGL_lose_context');
-    if (ext) ext.loseContext();
-    if (this.canvas.parentNode) this.canvas.parentNode.removeChild(this.canvas);
-  }
+	destroy() {
+		cancelAnimationFrame(this.raf);
+		if (this.tween) this.tween.kill();
+		this.resizeObserver.disconnect();
+		this.canvas.removeEventListener("webglcontextlost", this.boundContextLost);
+		this.textures.forEach((tex) => {
+			if (tex?.texture) this.gl.deleteTexture(tex.texture);
+		});
+		if (this.program?.program) this.gl.deleteProgram(this.program.program);
+		const ext = this.gl.getExtension("WEBGL_lose_context");
+		if (ext) ext.loseContext();
+		if (this.canvas.parentNode) this.canvas.parentNode.removeChild(this.canvas);
+	}
 }
 
 /**
  * @param {{ items?: Array<{ image: string, caption?: string }> } & Record<string, any>} props
  */
 export default function MorphSlider({
-  items = DEFAULT_ITEMS,
-  startIndex = 0,
-  transition = 'melt',
-  duration = 1.1,
-  ease = 'power2.inOut',
-  intensity = 0.55,
-  scale = 2.4,
-  aberration = 0.35,
-  drift = 0.4,
-  autoplay = false,
-  autoplayDelay = 4,
-  loop = true,
-  radius = 16,
-  overlayColor = '#000000',
-  showCaptions = true,
-  showControls = true,
-  showIndicators = true,
-  className = '',
-  ...props
+	items = DEFAULT_ITEMS,
+	startIndex = 0,
+	transition = "melt",
+	duration = 1.1,
+	ease = "power2.inOut",
+	intensity = 0.55,
+	scale = 2.4,
+	aberration = 0.35,
+	drift = 0.4,
+	autoplay = false,
+	autoplayDelay = 4,
+	loop = true,
+	radius = 16,
+	overlayColor = "#000000",
+	showCaptions = true,
+	showControls = true,
+	showIndicators = true,
+	className = "",
+	...props
 }) {
-  const containerRef = useRef(null);
-  const engineRef = useRef(null);
-  const [index, setIndex] = useState(startIndex);
-  const [hovering, setHovering] = useState(false);
+	const containerRef = useRef(null);
+	const engineRef = useRef(null);
+	const [index, setIndex] = useState(startIndex);
+	const [hovering, setHovering] = useState(false);
 
-  const optsRef = useRef();
-  optsRef.current = { transition, duration, ease, intensity, scale, aberration, drift, overlayColor, loop };
+	const optsRef = useRef();
+	optsRef.current = {
+		transition,
+		duration,
+		ease,
+		intensity,
+		scale,
+		aberration,
+		drift,
+		overlayColor,
+		loop,
+	};
 
-  useEffect(() => {
-    if (!containerRef.current) return undefined;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	useEffect(() => {
+		if (!containerRef.current) return undefined;
+		const reducedMotion = window.matchMedia(
+			"(prefers-reduced-motion: reduce)",
+		).matches;
 
-    const engine = new MorphEngine(containerRef.current, {
-      items,
-      startIndex,
-      reducedMotion,
-      dprCap: 2,
-      getOptions: () => optsRef.current,
-      onIndexChange: setIndex
-    });
-    engineRef.current = engine;
-    setIndex(startIndex);
+		const engine = new MorphEngine(containerRef.current, {
+			items,
+			startIndex,
+			reducedMotion,
+			dprCap: 2,
+			getOptions: () => optsRef.current,
+			onIndexChange: setIndex,
+		});
+		engineRef.current = engine;
+		setIndex(startIndex);
 
-    return () => {
-      engine.destroy();
-      engineRef.current = null;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, startIndex]);
+		return () => {
+			engine.destroy();
+			engineRef.current = null;
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [items, startIndex]);
 
-  const handleNext = useCallback(() => engineRef.current?.next(), []);
-  const handlePrev = useCallback(() => engineRef.current?.prev(), []);
+	const handleNext = useCallback(() => engineRef.current?.next(), []);
+	const handlePrev = useCallback(() => engineRef.current?.prev(), []);
 
-  useEffect(() => {
-    if (!autoplay || hovering) return undefined;
-    const id = setTimeout(() => engineRef.current?.next(), Math.max(autoplayDelay, 1) * 1000);
-    return () => clearTimeout(id);
-  }, [autoplay, autoplayDelay, hovering, index]);
+	useEffect(() => {
+		if (!autoplay || hovering) return undefined;
+		const id = setTimeout(
+			() => engineRef.current?.next(),
+			Math.max(autoplayDelay, 1) * 1000,
+		);
+		return () => clearTimeout(id);
+	}, [autoplay, autoplayDelay, hovering]);
 
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return undefined;
-    let startX = 0;
-    let width = 1;
-    let active = false;
+	useEffect(() => {
+		const el = containerRef.current;
+		if (!el) return undefined;
+		let startX = 0;
+		let width = 1;
+		let active = false;
 
-    const onDown = e => {
-      const rect = el.getBoundingClientRect();
-      width = rect.width || 1;
-      startX = e.clientX;
-      const px = (e.clientX - rect.left) / rect.width;
-      const py = (e.clientY - rect.top) / rect.height;
-      engineRef.current?.setPointer(px, 1 - py);
-      active = engineRef.current?.beginDrag() ?? false;
-      if (active && el.setPointerCapture) {
-        try {
-          el.setPointerCapture(e.pointerId);
-        } catch {}
-      }
-    };
-    const onMove = e => {
-      if (!active) return;
-      const ndx = (e.clientX - startX) / width;
-      engineRef.current?.drag(ndx);
-    };
-    const onUp = () => {
-      if (!active) return;
-      active = false;
-      engineRef.current?.endDrag();
-    };
+		const onDown = (e) => {
+			const rect = el.getBoundingClientRect();
+			width = rect.width || 1;
+			startX = e.clientX;
+			const px = (e.clientX - rect.left) / rect.width;
+			const py = (e.clientY - rect.top) / rect.height;
+			engineRef.current?.setPointer(px, 1 - py);
+			active = engineRef.current?.beginDrag() ?? false;
+			if (active && el.setPointerCapture) {
+				try {
+					el.setPointerCapture(e.pointerId);
+				} catch {}
+			}
+		};
+		const onMove = (e) => {
+			if (!active) return;
+			const ndx = (e.clientX - startX) / width;
+			engineRef.current?.drag(ndx);
+		};
+		const onUp = () => {
+			if (!active) return;
+			active = false;
+			engineRef.current?.endDrag();
+		};
 
-    el.addEventListener('pointerdown', onDown);
-    el.addEventListener('pointermove', onMove);
-    el.addEventListener('pointerup', onUp);
-    el.addEventListener('pointercancel', onUp);
+		el.addEventListener("pointerdown", onDown);
+		el.addEventListener("pointermove", onMove);
+		el.addEventListener("pointerup", onUp);
+		el.addEventListener("pointercancel", onUp);
 
-    return () => {
-      el.removeEventListener('pointerdown', onDown);
-      el.removeEventListener('pointermove', onMove);
-      el.removeEventListener('pointerup', onUp);
-      el.removeEventListener('pointercancel', onUp);
-    };
-  }, []);
+		return () => {
+			el.removeEventListener("pointerdown", onDown);
+			el.removeEventListener("pointermove", onMove);
+			el.removeEventListener("pointerup", onUp);
+			el.removeEventListener("pointercancel", onUp);
+		};
+	}, []);
 
-  const onKeyDown = useCallback(
-    e => {
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        handleNext();
-      } else if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        handlePrev();
-      }
-    },
-    [handleNext, handlePrev]
-  );
+	const onKeyDown = useCallback(
+		(e) => {
+			if (e.key === "ArrowRight") {
+				e.preventDefault();
+				handleNext();
+			} else if (e.key === "ArrowLeft") {
+				e.preventDefault();
+				handlePrev();
+			}
+		},
+		[handleNext, handlePrev],
+	);
 
-  const hasCaptions = items.some(item => item.caption);
+	const hasCaptions = items.some((item) => item.caption);
 
-  return (
-    <div
-      className={`morph-slider ${className}`.trim()}
-      style={{
-        borderRadius: `${radius}px`,
-        '--ms-swap': `${(duration * 0.66).toFixed(3)}s`,
-        '--ms-dot': `${(duration * 0.45).toFixed(3)}s`
-      }}
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-      {...props}
-    >
-      <div
-        ref={containerRef}
-        className="morph-slider-stage"
-        role="group"
-        aria-roledescription="carousel"
-        aria-label="Image morph slider"
-        tabIndex={0}
-        onKeyDown={onKeyDown}
-      />
+	return (
+		// biome-ignore lint/a11y/noStaticElementInteractions: hover only pauses autoplay, no keyboard equivalent needed
+		<div
+			className={`morph-slider ${className}`.trim()}
+			style={{
+				borderRadius: `${radius}px`,
+				"--ms-swap": `${(duration * 0.66).toFixed(3)}s`,
+				"--ms-dot": `${(duration * 0.45).toFixed(3)}s`,
+			}}
+			onMouseEnter={() => setHovering(true)}
+			onMouseLeave={() => setHovering(false)}
+			{...props}
+		>
+			{/* biome-ignore lint/a11y/useSemanticElements: role="group" + aria-roledescription="carousel" is the W3C ARIA APG carousel pattern */}
+			<div
+				ref={containerRef}
+				className="morph-slider-stage"
+				role="group"
+				aria-roledescription="carousel"
+				aria-label="Image morph slider"
+				onKeyDown={onKeyDown}
+			/>
 
-      {showCaptions && hasCaptions && (
-        <div className="morph-slider-caption" aria-live="polite">
-          {items.map((item, i) =>
-            item.caption ? (
-              <span
-                key={i}
-                aria-hidden={i === index ? undefined : true}
-                className={`morph-slider-caption-text ${i === index ? 'is-active' : ''}`}
-              >
-                {item.caption}
-              </span>
-            ) : null
-          )}
-        </div>
-      )}
+			{showCaptions && hasCaptions && (
+				<div className="morph-slider-caption" aria-live="polite">
+					{items.map((item, i) =>
+						item.caption ? (
+							<span
+								// biome-ignore lint/suspicious/noArrayIndexKey: items have no stable id, slide order is fixed by the caller
+								key={i}
+								aria-hidden={i === index ? undefined : true}
+								className={`morph-slider-caption-text ${i === index ? "is-active" : ""}`}
+							>
+								{item.caption}
+							</span>
+						) : null,
+					)}
+				</div>
+			)}
 
-      {showControls && (
-        <div className="morph-slider-controls">
-          <button type="button" className="morph-slider-btn" aria-label="Previous slide" onClick={handlePrev}>
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-              <path
-                d="M15 5l-7 7 7 7"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <button type="button" className="morph-slider-btn" aria-label="Next slide" onClick={handleNext}>
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-              <path
-                d="M9 5l7 7-7 7"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        </div>
-      )}
+			{showControls && (
+				<div className="morph-slider-controls">
+					<button
+						type="button"
+						className="morph-slider-btn"
+						aria-label="Previous slide"
+						onClick={handlePrev}
+					>
+						<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+							<path
+								d="M15 5l-7 7 7 7"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							/>
+						</svg>
+					</button>
+					<button
+						type="button"
+						className="morph-slider-btn"
+						aria-label="Next slide"
+						onClick={handleNext}
+					>
+						<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+							<path
+								d="M9 5l7 7-7 7"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							/>
+						</svg>
+					</button>
+				</div>
+			)}
 
-      {showIndicators && (
-        <div className="morph-slider-indicators" role="tablist" aria-label="Slides">
-          {items.map((item, i) => (
-            <button
-              key={i}
-              type="button"
-              role="tab"
-              aria-selected={i === index}
-              aria-label={`Go to slide ${i + 1}`}
-              className={`morph-slider-dot ${i === index ? 'is-active' : ''}`}
-              onClick={() => {
-                const engine = engineRef.current;
-                if (!engine || i === index) return;
-                engine.goTo(i > index ? 1 : -1);
-              }}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  );
+			{showIndicators && (
+				<div
+					className="morph-slider-indicators"
+					role="tablist"
+					aria-label="Slides"
+				>
+					{items.map((_item, i) => (
+						<button
+							// biome-ignore lint/suspicious/noArrayIndexKey: items have no stable id, slide order is fixed by the caller
+							key={i}
+							type="button"
+							role="tab"
+							aria-selected={i === index}
+							aria-label={`Go to slide ${i + 1}`}
+							className={`morph-slider-dot ${i === index ? "is-active" : ""}`}
+							onClick={() => {
+								const engine = engineRef.current;
+								if (!engine || i === index) return;
+								engine.goTo(i > index ? 1 : -1);
+							}}
+						/>
+					))}
+				</div>
+			)}
+		</div>
+	);
 }

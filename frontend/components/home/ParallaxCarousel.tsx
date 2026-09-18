@@ -1,80 +1,80 @@
-'use client';
+"use client";
 
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import Link from "next/link";
 // React Bits Pro "Parallax Carousel" — licensed component, adapted for this
 // project (no shadcn/cn helper here, so classNames are joined directly).
 import React, {
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-} from 'react';
-import Link from 'next/link';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import * as THREE from 'three';
+	useCallback,
+	useEffect,
+	useImperativeHandle,
+	useMemo,
+	useRef,
+} from "react";
+import * as THREE from "three";
 
 export interface ParallaxCarouselItem {
-  href: string;
-  content: React.ReactNode;
+	href: string;
+	content: React.ReactNode;
 }
 
 export interface ParallaxCarouselProps {
-  /** Ordered list of image URLs. Each becomes a plane in the carousel. */
-  images: string[];
-  /**
-   * Per-image click target + hover content, same order as `images`. When
-   * given, each plane gets a clickable overlay tracking its on-screen
-   * position (a `.gallery-card`/`.gallery-overlay` pair, same as the rest
-   * of the gallery, so hover/focus behaviour matches).
-   */
-  items?: ParallaxCarouselItem[];
-  /** Plane width in CSS pixels. */
-  imageWidth?: number;
-  /** Plane height in CSS pixels. */
-  imageHeight?: number;
-  /** Horizontal gap between planes in CSS pixels. */
-  gap?: number;
-  /**
-   * UV-space horizontal shift applied as planes drift away from screen
-   * centre. Higher = more dramatic counter-motion inside each plane.
-   * Range: roughly 0..0.6.
-   */
-  parallaxIntensity?: number;
-  /**
-   * Maximum normalised parallax travel (as a fraction of viewport
-   * width). The texture is automatically zoomed in by this much so the
-   * plane never shows empty space, regardless of how the parallax
-   * shifts the texture. Higher = more pronounced parallax sweep, but
-   * also more zoom on the source image. Range: 0.1..1.0.
-   */
-  uvScale?: number;
-  /** Smoothing factor applied to the scroll lerp each frame (0..1). */
-  lerp?: number;
-  /** Multiplier on wheel deltas. */
-  wheelSensitivity?: number;
-  /** Multiplier on pointer-drag deltas. */
-  dragSensitivity?: number;
-  /** Loop endlessly horizontally (planes wrap around the strip). */
-  loop?: boolean;
-  /** Fixed border radius applied to each plane (CSS pixels). */
-  borderRadius?: number;
-  /** Idle drift speed in CSS px/s when the user is not interacting. 0 = none. */
-  autoplaySpeed?: number;
-  /** Pause autoplay while hovering. */
-  pauseOnHover?: boolean;
-  /** Show a subtle progress indicator at the bottom. Loop mode hides it. */
-  showProgress?: boolean;
-  /** Container class names. */
-  className?: string;
-  /** Container inline styles. */
-  style?: React.CSSProperties;
+	/** Ordered list of image URLs. Each becomes a plane in the carousel. */
+	images: string[];
+	/**
+	 * Per-image click target + hover content, same order as `images`. When
+	 * given, each plane gets a clickable overlay tracking its on-screen
+	 * position (a `.gallery-card`/`.gallery-overlay` pair, same as the rest
+	 * of the gallery, so hover/focus behaviour matches).
+	 */
+	items?: ParallaxCarouselItem[];
+	/** Plane width in CSS pixels. */
+	imageWidth?: number;
+	/** Plane height in CSS pixels. */
+	imageHeight?: number;
+	/** Horizontal gap between planes in CSS pixels. */
+	gap?: number;
+	/**
+	 * UV-space horizontal shift applied as planes drift away from screen
+	 * centre. Higher = more dramatic counter-motion inside each plane.
+	 * Range: roughly 0..0.6.
+	 */
+	parallaxIntensity?: number;
+	/**
+	 * Maximum normalised parallax travel (as a fraction of viewport
+	 * width). The texture is automatically zoomed in by this much so the
+	 * plane never shows empty space, regardless of how the parallax
+	 * shifts the texture. Higher = more pronounced parallax sweep, but
+	 * also more zoom on the source image. Range: 0.1..1.0.
+	 */
+	uvScale?: number;
+	/** Smoothing factor applied to the scroll lerp each frame (0..1). */
+	lerp?: number;
+	/** Multiplier on wheel deltas. */
+	wheelSensitivity?: number;
+	/** Multiplier on pointer-drag deltas. */
+	dragSensitivity?: number;
+	/** Loop endlessly horizontally (planes wrap around the strip). */
+	loop?: boolean;
+	/** Fixed border radius applied to each plane (CSS pixels). */
+	borderRadius?: number;
+	/** Idle drift speed in CSS px/s when the user is not interacting. 0 = none. */
+	autoplaySpeed?: number;
+	/** Pause autoplay while hovering. */
+	pauseOnHover?: boolean;
+	/** Show a subtle progress indicator at the bottom. Loop mode hides it. */
+	showProgress?: boolean;
+	/** Container class names. */
+	className?: string;
+	/** Container inline styles. */
+	style?: React.CSSProperties;
 }
 
 export interface ParallaxCarouselRef {
-  /** Scroll to a specific image index (0-based). */
-  scrollToIndex: (index: number) => void;
-  /** Reset scroll position to the start. */
-  reset: () => void;
+	/** Scroll to a specific image index (0-based). */
+	scrollToIndex: (index: number) => void;
+	/** Reset scroll position to the start. */
+	reset: () => void;
 }
 
 const PLANE_VERTEX = `
@@ -141,495 +141,538 @@ void main() {
 `;
 
 function clamp(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, value));
+	return Math.max(min, Math.min(max, value));
 }
 
 function buildUniforms() {
-  return {
-    uMap: { value: null as THREE.Texture | null },
-    uPlanePx: { value: new THREE.Vector2(1, 1) },
-    uTexPx: { value: new THREE.Vector2(1, 1) },
-    uShift: { value: 0 },
-    uIntensity: { value: 0.4 },
-    uMaxShift: { value: 0.2 },
-    uRadiusPx: { value: 0 },
-    uHasTexture: { value: 0 },
-  };
+	return {
+		uMap: { value: null as THREE.Texture | null },
+		uPlanePx: { value: new THREE.Vector2(1, 1) },
+		uTexPx: { value: new THREE.Vector2(1, 1) },
+		uShift: { value: 0 },
+		uIntensity: { value: 0.4 },
+		uMaxShift: { value: 0.2 },
+		uRadiusPx: { value: 0 },
+		uHasTexture: { value: 0 },
+	};
 }
 
 interface ScrollState {
-  current: number;
-  target: number;
-  limit: number;
+	current: number;
+	target: number;
+	limit: number;
 }
 
 interface PlaneProps {
-  src: string;
-  index: number;
-  imageWidth: number;
-  imageHeight: number;
-  gap: number;
-  parallaxIntensity: number;
-  uvScale: number;
-  borderRadius: number;
-  loop: boolean;
-  totalCount: number;
-  scrollRef: React.RefObject<ScrollState>;
+	src: string;
+	index: number;
+	imageWidth: number;
+	imageHeight: number;
+	gap: number;
+	parallaxIntensity: number;
+	uvScale: number;
+	borderRadius: number;
+	loop: boolean;
+	totalCount: number;
+	scrollRef: React.RefObject<ScrollState>;
 }
 
 const Plane: React.FC<PlaneProps> = ({
-  src,
-  index,
-  imageWidth,
-  imageHeight,
-  gap,
-  parallaxIntensity,
-  uvScale,
-  borderRadius,
-  loop,
-  totalCount,
-  scrollRef,
+	src,
+	index,
+	imageWidth,
+	imageHeight,
+	gap,
+	parallaxIntensity,
+	uvScale,
+	borderRadius,
+	loop,
+	totalCount,
+	scrollRef,
 }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const textureRef = useRef<THREE.Texture | null>(null);
-  const { size } = useThree();
+	const meshRef = useRef<THREE.Mesh>(null);
+	const textureRef = useRef<THREE.Texture | null>(null);
+	const { size } = useThree();
 
-  const [uniforms] = React.useState(buildUniforms);
+	const [uniforms] = React.useState(buildUniforms);
 
-  const propsRef = useRef({
-    parallaxIntensity,
-    uvScale,
-    borderRadius,
-    imageWidth,
-    imageHeight,
-    gap,
-    loop,
-  });
-  useEffect(() => {
-    propsRef.current = {
-      parallaxIntensity,
-      uvScale,
-      borderRadius,
-      imageWidth,
-      imageHeight,
-      gap,
-      loop,
-    };
-  }, [parallaxIntensity, uvScale, borderRadius, imageWidth, imageHeight, gap, loop]);
+	const propsRef = useRef({
+		parallaxIntensity,
+		uvScale,
+		borderRadius,
+		imageWidth,
+		imageHeight,
+		gap,
+		loop,
+	});
+	useEffect(() => {
+		propsRef.current = {
+			parallaxIntensity,
+			uvScale,
+			borderRadius,
+			imageWidth,
+			imageHeight,
+			gap,
+			loop,
+		};
+	}, [
+		parallaxIntensity,
+		uvScale,
+		borderRadius,
+		imageWidth,
+		imageHeight,
+		gap,
+		loop,
+	]);
 
-  useEffect(() => {
-    if (!src) return;
-    let cancelled = false;
-    const loader = new THREE.TextureLoader();
-    loader.setCrossOrigin('anonymous');
-    loader.load(
-      src,
-      (tex) => {
-        if (cancelled) {
-          tex.dispose();
-          return;
-        }
-        tex.colorSpace = THREE.SRGBColorSpace;
-        tex.minFilter = THREE.LinearFilter;
-        tex.magFilter = THREE.LinearFilter;
-        tex.wrapS = THREE.ClampToEdgeWrapping;
-        tex.wrapT = THREE.ClampToEdgeWrapping;
-        textureRef.current = tex;
-      },
-      undefined,
-      () => {
-        if (!cancelled) textureRef.current = null;
-      },
-    );
-    return () => {
-      cancelled = true;
-      if (textureRef.current) {
-        textureRef.current.dispose();
-        textureRef.current = null;
-      }
-    };
-  }, [src]);
+	useEffect(() => {
+		if (!src) return;
+		let cancelled = false;
+		const loader = new THREE.TextureLoader();
+		loader.setCrossOrigin("anonymous");
+		loader.load(
+			src,
+			(tex) => {
+				if (cancelled) {
+					tex.dispose();
+					return;
+				}
+				tex.colorSpace = THREE.SRGBColorSpace;
+				tex.minFilter = THREE.LinearFilter;
+				tex.magFilter = THREE.LinearFilter;
+				tex.wrapS = THREE.ClampToEdgeWrapping;
+				tex.wrapT = THREE.ClampToEdgeWrapping;
+				textureRef.current = tex;
+			},
+			undefined,
+			() => {
+				if (!cancelled) textureRef.current = null;
+			},
+		);
+		return () => {
+			cancelled = true;
+			if (textureRef.current) {
+				textureRef.current.dispose();
+				textureRef.current = null;
+			}
+		};
+	}, [src]);
 
-  useFrame(() => {
-    const mesh = meshRef.current;
-    if (!mesh) return;
-    const mat = mesh.material as THREE.ShaderMaterial;
-    const u = mat.uniforms;
-    const p = propsRef.current;
-    const scroll = scrollRef.current;
-    if (!scroll) return;
+	useFrame(() => {
+		const mesh = meshRef.current;
+		if (!mesh) return;
+		const mat = mesh.material as THREE.ShaderMaterial;
+		const u = mat.uniforms;
+		const p = propsRef.current;
+		const scroll = scrollRef.current;
+		if (!scroll) return;
 
-    const planeStride = p.imageWidth + p.gap;
-    let offsetPx = index * planeStride - scroll.current;
+		const planeStride = p.imageWidth + p.gap;
+		let offsetPx = index * planeStride - scroll.current;
 
-    if (p.loop && totalCount > 0) {
-      const stripLength = totalCount * planeStride;
-      const halfStrip = stripLength * 0.5;
-      offsetPx =
-        ((((offsetPx + halfStrip) % stripLength) + stripLength) % stripLength) - halfStrip;
-    }
+		if (p.loop && totalCount > 0) {
+			const stripLength = totalCount * planeStride;
+			const halfStrip = stripLength * 0.5;
+			offsetPx =
+				((((offsetPx + halfStrip) % stripLength) + stripLength) % stripLength) -
+				halfStrip;
+		}
 
-    mesh.position.x = offsetPx;
-    mesh.position.y = 0;
-    mesh.scale.set(p.imageWidth, p.imageHeight, 1);
+		mesh.position.x = offsetPx;
+		mesh.position.y = 0;
+		mesh.scale.set(p.imageWidth, p.imageHeight, 1);
 
-    const viewport = Math.max(size.width, 1);
-    const norm = clamp(offsetPx / viewport, -p.uvScale, p.uvScale);
-    u.uShift.value = -norm;
-    u.uIntensity.value = p.parallaxIntensity;
-    u.uMaxShift.value = p.uvScale * p.parallaxIntensity;
-    u.uRadiusPx.value = p.borderRadius;
-    (u.uPlanePx.value as THREE.Vector2).set(p.imageWidth, p.imageHeight);
+		const viewport = Math.max(size.width, 1);
+		const norm = clamp(offsetPx / viewport, -p.uvScale, p.uvScale);
+		u.uShift.value = -norm;
+		u.uIntensity.value = p.parallaxIntensity;
+		u.uMaxShift.value = p.uvScale * p.parallaxIntensity;
+		u.uRadiusPx.value = p.borderRadius;
+		(u.uPlanePx.value as THREE.Vector2).set(p.imageWidth, p.imageHeight);
 
-    if (textureRef.current?.image) {
-      u.uMap.value = textureRef.current;
-      const img = textureRef.current.image as HTMLImageElement;
-      (u.uTexPx.value as THREE.Vector2).set(
-        img.naturalWidth || img.width || 1,
-        img.naturalHeight || img.height || 1,
-      );
-      u.uHasTexture.value = 1;
-    } else {
-      u.uHasTexture.value = 0;
-    }
-  });
+		if (textureRef.current?.image) {
+			u.uMap.value = textureRef.current;
+			const img = textureRef.current.image as HTMLImageElement;
+			(u.uTexPx.value as THREE.Vector2).set(
+				img.naturalWidth || img.width || 1,
+				img.naturalHeight || img.height || 1,
+			);
+			u.uHasTexture.value = 1;
+		} else {
+			u.uHasTexture.value = 0;
+		}
+	});
 
-  return (
-    <mesh ref={meshRef}>
-      <planeGeometry args={[1, 1, 1, 1]} />
-      <shaderMaterial
-        vertexShader={PLANE_VERTEX}
-        fragmentShader={PLANE_FRAGMENT}
-        uniforms={uniforms}
-        transparent
-      />
-    </mesh>
-  );
+	return (
+		<mesh ref={meshRef}>
+			<planeGeometry args={[1, 1, 1, 1]} />
+			<shaderMaterial
+				vertexShader={PLANE_VERTEX}
+				fragmentShader={PLANE_FRAGMENT}
+				uniforms={uniforms}
+				transparent
+			/>
+		</mesh>
+	);
 };
 
 const CameraRig: React.FC = () => {
-  const camRef = useRef<THREE.OrthographicCamera>(null);
-  const { size, set } = useThree();
+	const camRef = useRef<THREE.OrthographicCamera>(null);
+	const { size, set } = useThree();
 
-  useEffect(() => {
-    const cam = camRef.current;
-    if (!cam) return;
-    cam.left = -size.width / 2;
-    cam.right = size.width / 2;
-    cam.top = size.height / 2;
-    cam.bottom = -size.height / 2;
-    cam.near = 0.1;
-    cam.far = 1000;
-    cam.position.set(0, 0, 10);
-    cam.updateProjectionMatrix();
-    set({ camera: cam });
-  }, [size.width, size.height, set]);
+	useEffect(() => {
+		const cam = camRef.current;
+		if (!cam) return;
+		cam.left = -size.width / 2;
+		cam.right = size.width / 2;
+		cam.top = size.height / 2;
+		cam.bottom = -size.height / 2;
+		cam.near = 0.1;
+		cam.far = 1000;
+		cam.position.set(0, 0, 10);
+		cam.updateProjectionMatrix();
+		set({ camera: cam });
+	}, [size.width, size.height, set]);
 
-  return <orthographicCamera ref={camRef} />;
+	return <orthographicCamera ref={camRef} />;
 };
 
-const ParallaxCarousel = React.forwardRef<ParallaxCarouselRef, ParallaxCarouselProps>(
-  (
-    {
-      images,
-      items,
-      imageWidth = 420,
-      imageHeight = 560,
-      gap = 32,
-      parallaxIntensity = 0.4,
-      uvScale = 0.85,
-      lerp = 0.08,
-      wheelSensitivity = 1,
-      dragSensitivity = 1.4,
-      loop = false,
-      borderRadius = 16,
-      autoplaySpeed = 0,
-      pauseOnHover = true,
-      showProgress = true,
-      className,
-      style,
-    },
-    ref,
-  ) => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const rafRef = useRef<number | null>(null);
-    const hoverRef = useRef(false);
-    const draggingRef = useRef(false);
-    const dragMovedRef = useRef(false);
-    const lastPointerXRef = useRef(0);
-    const lastFrameTsRef = useRef<number | null>(null);
-    const progressBarRef = useRef<HTMLDivElement>(null);
-    const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+const ParallaxCarousel = React.forwardRef<
+	ParallaxCarouselRef,
+	ParallaxCarouselProps
+>(
+	(
+		{
+			images,
+			items,
+			imageWidth = 420,
+			imageHeight = 560,
+			gap = 32,
+			parallaxIntensity = 0.4,
+			uvScale = 0.85,
+			lerp = 0.08,
+			wheelSensitivity = 1,
+			dragSensitivity = 1.4,
+			loop = false,
+			borderRadius = 16,
+			autoplaySpeed = 0,
+			pauseOnHover = true,
+			showProgress = true,
+			className,
+			style,
+		},
+		ref,
+	) => {
+		const containerRef = useRef<HTMLDivElement>(null);
+		const rafRef = useRef<number | null>(null);
+		const hoverRef = useRef(false);
+		const draggingRef = useRef(false);
+		const dragMovedRef = useRef(false);
+		const lastPointerXRef = useRef(0);
+		const lastFrameTsRef = useRef<number | null>(null);
+		const progressBarRef = useRef<HTMLDivElement>(null);
+		const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
 
-    const scrollRef = useRef<ScrollState>({ current: 0, target: 0, limit: 0 });
+		const scrollRef = useRef<ScrollState>({ current: 0, target: 0, limit: 0 });
 
-    const settingsRef = useRef({
-      lerp,
-      wheelSensitivity,
-      dragSensitivity,
-      autoplaySpeed,
-      loop,
-      pauseOnHover,
-      imageWidth,
-      imageHeight,
-      gap,
-      count: images.length,
-    });
-    useEffect(() => {
-      settingsRef.current = {
-        lerp,
-        wheelSensitivity,
-        dragSensitivity,
-        autoplaySpeed,
-        loop,
-        pauseOnHover,
-        imageWidth,
-        imageHeight,
-        gap,
-        count: images.length,
-      };
-    }, [
-      lerp,
-      wheelSensitivity,
-      dragSensitivity,
-      autoplaySpeed,
-      loop,
-      pauseOnHover,
-      imageWidth,
-      imageHeight,
-      gap,
-      images.length,
-    ]);
+		const settingsRef = useRef({
+			lerp,
+			wheelSensitivity,
+			dragSensitivity,
+			autoplaySpeed,
+			loop,
+			pauseOnHover,
+			imageWidth,
+			imageHeight,
+			gap,
+			count: images.length,
+		});
+		useEffect(() => {
+			settingsRef.current = {
+				lerp,
+				wheelSensitivity,
+				dragSensitivity,
+				autoplaySpeed,
+				loop,
+				pauseOnHover,
+				imageWidth,
+				imageHeight,
+				gap,
+				count: images.length,
+			};
+		}, [
+			lerp,
+			wheelSensitivity,
+			dragSensitivity,
+			autoplaySpeed,
+			loop,
+			pauseOnHover,
+			imageWidth,
+			imageHeight,
+			gap,
+			images.length,
+		]);
 
-    const recomputeLimit = useCallback(() => {
-      const node = containerRef.current;
-      if (!node) return;
-      const total = images.length * (imageWidth + gap) - gap;
-      const visible = node.clientWidth;
-      scrollRef.current.limit = loop ? Number.POSITIVE_INFINITY : Math.max(0, total - visible);
-    }, [images.length, imageWidth, gap, loop]);
+		const recomputeLimit = useCallback(() => {
+			const node = containerRef.current;
+			if (!node) return;
+			const total = images.length * (imageWidth + gap) - gap;
+			const visible = node.clientWidth;
+			scrollRef.current.limit = loop
+				? Number.POSITIVE_INFINITY
+				: Math.max(0, total - visible);
+		}, [images.length, imageWidth, gap, loop]);
 
-    useEffect(() => {
-      recomputeLimit();
-      const node = containerRef.current;
-      if (!node || typeof ResizeObserver === 'undefined') return;
-      const ro = new ResizeObserver(recomputeLimit);
-      ro.observe(node);
-      return () => ro.disconnect();
-    }, [recomputeLimit]);
+		useEffect(() => {
+			recomputeLimit();
+			const node = containerRef.current;
+			if (!node || typeof ResizeObserver === "undefined") return;
+			const ro = new ResizeObserver(recomputeLimit);
+			ro.observe(node);
+			return () => ro.disconnect();
+		}, [recomputeLimit]);
 
-    const tickRef = useRef<((now: number) => void) | null>(null);
-    useEffect(() => {
-      const tick = (now: number) => {
-        const s = scrollRef.current;
-        const settings = settingsRef.current;
+		const tickRef = useRef<((now: number) => void) | null>(null);
+		useEffect(() => {
+			const tick = (now: number) => {
+				const s = scrollRef.current;
+				const settings = settingsRef.current;
 
-        const last = lastFrameTsRef.current ?? now;
-        const dt = Math.max(0, (now - last) / 1000);
-        lastFrameTsRef.current = now;
+				const last = lastFrameTsRef.current ?? now;
+				const dt = Math.max(0, (now - last) / 1000);
+				lastFrameTsRef.current = now;
 
-        if (settings.autoplaySpeed !== 0 && !draggingRef.current && !(settings.pauseOnHover && hoverRef.current)) {
-          s.target += settings.autoplaySpeed * dt;
-        }
+				if (
+					settings.autoplaySpeed !== 0 &&
+					!draggingRef.current &&
+					!(settings.pauseOnHover && hoverRef.current)
+				) {
+					s.target += settings.autoplaySpeed * dt;
+				}
 
-        if (!settings.loop) {
-          s.target = clamp(s.target, 0, s.limit);
-        }
+				if (!settings.loop) {
+					s.target = clamp(s.target, 0, s.limit);
+				}
 
-        const k = clamp(settings.lerp, 0.001, 1);
-        s.current += (s.target - s.current) * k;
+				const k = clamp(settings.lerp, 0.001, 1);
+				s.current += (s.target - s.current) * k;
 
-        if (progressBarRef.current && !settings.loop && s.limit > 0) {
-          const ratio = clamp(s.current / s.limit, 0, 1);
-          progressBarRef.current.style.transform = `scaleX(${ratio})`;
-        }
+				if (progressBarRef.current && !settings.loop && s.limit > 0) {
+					const ratio = clamp(s.current / s.limit, 0, 1);
+					progressBarRef.current.style.transform = `scaleX(${ratio})`;
+				}
 
-        const node = containerRef.current;
-        if (node && itemRefs.current.length) {
-          const stride = settings.imageWidth + settings.gap;
-          const centerX = node.clientWidth / 2;
-          const centerY = node.clientHeight / 2;
-          const stripLength = settings.count * stride;
-          const halfStrip = stripLength * 0.5;
-          itemRefs.current.forEach((el, i) => {
-            if (!el) return;
-            let offsetPx = i * stride - s.current;
-            if (settings.loop && stripLength > 0) {
-              offsetPx = ((((offsetPx + halfStrip) % stripLength) + stripLength) % stripLength) - halfStrip;
-            }
-            const left = centerX + offsetPx - settings.imageWidth / 2;
-            const top = centerY - settings.imageHeight / 2;
-            el.style.transform = `translate(${left}px, ${top}px)`;
-          });
-        }
+				const node = containerRef.current;
+				if (node && itemRefs.current.length) {
+					const stride = settings.imageWidth + settings.gap;
+					const centerX = node.clientWidth / 2;
+					const centerY = node.clientHeight / 2;
+					const stripLength = settings.count * stride;
+					const halfStrip = stripLength * 0.5;
+					itemRefs.current.forEach((el, i) => {
+						if (!el) return;
+						let offsetPx = i * stride - s.current;
+						if (settings.loop && stripLength > 0) {
+							offsetPx =
+								((((offsetPx + halfStrip) % stripLength) + stripLength) %
+									stripLength) -
+								halfStrip;
+						}
+						const left = centerX + offsetPx - settings.imageWidth / 2;
+						const top = centerY - settings.imageHeight / 2;
+						el.style.transform = `translate(${left}px, ${top}px)`;
+					});
+				}
 
-        rafRef.current = requestAnimationFrame(tick);
-      };
-      tickRef.current = tick;
-      rafRef.current = requestAnimationFrame(tick);
-      return () => {
-        if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-        tickRef.current = null;
-        lastFrameTsRef.current = null;
-      };
-    }, []);
+				rafRef.current = requestAnimationFrame(tick);
+			};
+			tickRef.current = tick;
+			rafRef.current = requestAnimationFrame(tick);
+			return () => {
+				if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+				rafRef.current = null;
+				tickRef.current = null;
+				lastFrameTsRef.current = null;
+			};
+		}, []);
 
-    useEffect(() => {
-      const node = containerRef.current;
-      if (!node) return;
+		useEffect(() => {
+			const node = containerRef.current;
+			if (!node) return;
 
-      const onWheel = (e: WheelEvent) => {
-        const settings = settingsRef.current;
-        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-        scrollRef.current.target += delta * settings.wheelSensitivity;
-      };
+			const onWheel = (e: WheelEvent) => {
+				const settings = settingsRef.current;
+				const delta =
+					Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+				scrollRef.current.target += delta * settings.wheelSensitivity;
+			};
 
-      // Drag tracked via window listeners (not setPointerCapture) so the
-      // click that ends a plain click still targets the item under the
-      // pointer instead of being retargeted to this container.
-      const onPointerMove = (e: PointerEvent) => {
-        if (!draggingRef.current) return;
-        const settings = settingsRef.current;
-        const dx = e.clientX - lastPointerXRef.current;
-        if (Math.abs(dx) > 3) dragMovedRef.current = true;
-        lastPointerXRef.current = e.clientX;
-        scrollRef.current.target -= dx * settings.dragSensitivity;
-      };
+			// Drag tracked via window listeners (not setPointerCapture) so the
+			// click that ends a plain click still targets the item under the
+			// pointer instead of being retargeted to this container.
+			const onPointerMove = (e: PointerEvent) => {
+				if (!draggingRef.current) return;
+				const settings = settingsRef.current;
+				const dx = e.clientX - lastPointerXRef.current;
+				if (Math.abs(dx) > 3) dragMovedRef.current = true;
+				lastPointerXRef.current = e.clientX;
+				scrollRef.current.target -= dx * settings.dragSensitivity;
+			};
 
-      const endDrag = () => {
-        if (!draggingRef.current) return;
-        draggingRef.current = false;
-        node.style.cursor = 'grab';
-        window.removeEventListener('pointermove', onPointerMove);
-        window.removeEventListener('pointerup', endDrag);
-        window.removeEventListener('pointercancel', endDrag);
-      };
+			const endDrag = () => {
+				if (!draggingRef.current) return;
+				draggingRef.current = false;
+				node.style.cursor = "grab";
+				window.removeEventListener("pointermove", onPointerMove);
+				window.removeEventListener("pointerup", endDrag);
+				window.removeEventListener("pointercancel", endDrag);
+			};
 
-      const onPointerDown = (e: PointerEvent) => {
-        if (e.button !== undefined && e.button !== 0) return;
-        draggingRef.current = true;
-        dragMovedRef.current = false;
-        lastPointerXRef.current = e.clientX;
-        node.style.cursor = 'grabbing';
-        window.addEventListener('pointermove', onPointerMove);
-        window.addEventListener('pointerup', endDrag);
-        window.addEventListener('pointercancel', endDrag);
-      };
+			const onPointerDown = (e: PointerEvent) => {
+				if (e.button !== undefined && e.button !== 0) return;
+				draggingRef.current = true;
+				dragMovedRef.current = false;
+				lastPointerXRef.current = e.clientX;
+				node.style.cursor = "grabbing";
+				window.addEventListener("pointermove", onPointerMove);
+				window.addEventListener("pointerup", endDrag);
+				window.addEventListener("pointercancel", endDrag);
+			};
 
-      const onEnter = () => {
-        hoverRef.current = true;
-      };
-      const onLeave = () => {
-        hoverRef.current = false;
-      };
+			const onEnter = () => {
+				hoverRef.current = true;
+			};
+			const onLeave = () => {
+				hoverRef.current = false;
+			};
 
-      node.addEventListener('wheel', onWheel, { passive: true });
-      node.addEventListener('pointerdown', onPointerDown);
-      node.addEventListener('mouseenter', onEnter);
-      node.addEventListener('mouseleave', onLeave);
+			node.addEventListener("wheel", onWheel, { passive: true });
+			node.addEventListener("pointerdown", onPointerDown);
+			node.addEventListener("mouseenter", onEnter);
+			node.addEventListener("mouseleave", onLeave);
 
-      return () => {
-        node.removeEventListener('wheel', onWheel);
-        node.removeEventListener('pointerdown', onPointerDown);
-        node.removeEventListener('mouseenter', onEnter);
-        node.removeEventListener('mouseleave', onLeave);
-        window.removeEventListener('pointermove', onPointerMove);
-        window.removeEventListener('pointerup', endDrag);
-        window.removeEventListener('pointercancel', endDrag);
-      };
-    }, []);
+			return () => {
+				node.removeEventListener("wheel", onWheel);
+				node.removeEventListener("pointerdown", onPointerDown);
+				node.removeEventListener("mouseenter", onEnter);
+				node.removeEventListener("mouseleave", onLeave);
+				window.removeEventListener("pointermove", onPointerMove);
+				window.removeEventListener("pointerup", endDrag);
+				window.removeEventListener("pointercancel", endDrag);
+			};
+		}, []);
 
-    const scrollToIndex = useCallback((idx: number) => {
-      const settings = settingsRef.current;
-      const target = idx * (settings.imageWidth + settings.gap);
-      scrollRef.current.target = settings.loop ? target : clamp(target, 0, scrollRef.current.limit);
-    }, []);
+		const scrollToIndex = useCallback((idx: number) => {
+			const settings = settingsRef.current;
+			const target = idx * (settings.imageWidth + settings.gap);
+			scrollRef.current.target = settings.loop
+				? target
+				: clamp(target, 0, scrollRef.current.limit);
+		}, []);
 
-    const reset = useCallback(() => {
-      scrollRef.current.target = 0;
-      scrollRef.current.current = 0;
-    }, []);
+		const reset = useCallback(() => {
+			scrollRef.current.target = 0;
+			scrollRef.current.current = 0;
+		}, []);
 
-    useImperativeHandle(ref, () => ({ scrollToIndex, reset }), [scrollToIndex, reset]);
+		useImperativeHandle(ref, () => ({ scrollToIndex, reset }), [
+			scrollToIndex,
+			reset,
+		]);
 
-    const planeKeys = useMemo(() => images.map((src, i) => `${i}-${src}`), [images]);
+		const planeKeys = useMemo(
+			() => images.map((src, i) => `${i}-${src}`),
+			[images],
+		);
 
-    return (
-      <div
-        ref={containerRef}
-        className={['relative w-full h-full overflow-hidden select-none', className].filter(Boolean).join(' ')}
-        style={{ cursor: 'grab', touchAction: 'pan-y', ...style }}
-        onClickCapture={(e) => {
-          if (dragMovedRef.current) {
-            e.preventDefault();
-            e.stopPropagation();
-            dragMovedRef.current = false;
-          }
-        }}
-      >
-        <Canvas gl={{ antialias: true, alpha: true }} dpr={[1, 2]} className="absolute! inset-0 w-full h-full">
-          <CameraRig />
-          {images.map((src, i) => (
-            <Plane
-              key={planeKeys[i]}
-              src={src}
-              index={i}
-              imageWidth={imageWidth}
-              imageHeight={imageHeight}
-              gap={gap}
-              parallaxIntensity={parallaxIntensity}
-              uvScale={uvScale}
-              borderRadius={borderRadius}
-              loop={loop}
-              totalCount={images.length}
-              scrollRef={scrollRef}
-            />
-          ))}
-        </Canvas>
+		return (
+			<div
+				ref={containerRef}
+				className={[
+					"relative w-full h-full overflow-hidden select-none",
+					className,
+				]
+					.filter(Boolean)
+					.join(" ")}
+				style={{ cursor: "grab", touchAction: "pan-y", ...style }}
+				onClickCapture={(e) => {
+					if (dragMovedRef.current) {
+						e.preventDefault();
+						e.stopPropagation();
+						dragMovedRef.current = false;
+					}
+				}}
+			>
+				<Canvas
+					gl={{ antialias: true, alpha: true }}
+					dpr={[1, 2]}
+					className="absolute! inset-0 w-full h-full"
+				>
+					<CameraRig />
+					{images.map((src, i) => (
+						<Plane
+							key={planeKeys[i]}
+							src={src}
+							index={i}
+							imageWidth={imageWidth}
+							imageHeight={imageHeight}
+							gap={gap}
+							parallaxIntensity={parallaxIntensity}
+							uvScale={uvScale}
+							borderRadius={borderRadius}
+							loop={loop}
+							totalCount={images.length}
+							scrollRef={scrollRef}
+						/>
+					))}
+				</Canvas>
 
-        {items && (
-          <div className="absolute inset-0" aria-hidden={false}>
-            {items.map((item, i) => (
-              <Link
-                key={planeKeys[i]}
-                ref={(el) => {
-                  itemRefs.current[i] = el;
-                }}
-                href={item.href}
-                className="gallery-card"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: imageWidth,
-                  height: imageHeight,
-                  cursor: 'pointer',
-                  display: 'block',
-                  overflow: 'hidden',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                }}
-              >
-                {item.content}
-              </Link>
-            ))}
-          </div>
-        )}
+				{items && (
+					<div className="absolute inset-0" aria-hidden={false}>
+						{items.map((item, i) => (
+							<Link
+								key={planeKeys[i]}
+								ref={(el) => {
+									itemRefs.current[i] = el;
+								}}
+								href={item.href}
+								className="gallery-card"
+								style={{
+									position: "absolute",
+									top: 0,
+									left: 0,
+									width: imageWidth,
+									height: imageHeight,
+									cursor: "pointer",
+									display: "block",
+									overflow: "hidden",
+									textDecoration: "none",
+									color: "inherit",
+								}}
+							>
+								{item.content}
+							</Link>
+						))}
+					</div>
+				)}
 
-        {showProgress && !loop && (
-          <div
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 h-[2px] w-32 bg-white/15 rounded-full overflow-hidden pointer-events-none"
-            aria-hidden
-          >
-            <div ref={progressBarRef} className="h-full w-full bg-white/80 origin-left" style={{ transform: 'scaleX(0)' }} />
-          </div>
-        )}
-      </div>
-    );
-  },
+				{showProgress && !loop && (
+					<div
+						className="absolute bottom-4 left-1/2 -translate-x-1/2 h-[2px] w-32 bg-white/15 rounded-full overflow-hidden pointer-events-none"
+						aria-hidden
+					>
+						<div
+							ref={progressBarRef}
+							className="h-full w-full bg-white/80 origin-left"
+							style={{ transform: "scaleX(0)" }}
+						/>
+					</div>
+				)}
+			</div>
+		);
+	},
 );
 
-ParallaxCarousel.displayName = 'ParallaxCarousel';
+ParallaxCarousel.displayName = "ParallaxCarousel";
 
 export default ParallaxCarousel;

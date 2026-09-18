@@ -3,112 +3,114 @@
 /* Mirrors lib/theme.ts's COLORS for the few spots (plain CSS files) that
    can't import the JS constant. Keep both in sync. */
 :root {
-  --background: #f2efe9;
-  --foreground: #1a1714;
-  --cream: #f6f4ef;
-  --ink-dark: #0a0805;
-  --media-black: #0c0c0e;
+	--background: #f2efe9;
+	--foreground: #1a1714;
+	--cream: #f6f4ef;
+	--ink-dark: #0a0805;
+	--media-black: #0c0c0e;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
 }
 
 html {
-  scroll-behavior: smooth;
+	scroll-behavior: smooth;
 }
 
 /* Page-transition crossfade (React ViewTransition, wired in lib/design/shared.tsx's Paper) */
 ::view-transition {
-  pointer-events: none;
+	pointer-events: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(*),
-  ::view-transition-new(*),
-  ::view-transition-group(*) {
-    animation-duration: 0s !important;
-    animation-delay: 0s !important;
-  }
+	::view-transition-old(*),
+	::view-transition-new(*),
+	::view-transition-group(*) {
+		/* biome-ignore lint/complexity/noImportantStyles: must beat the UA's default view-transition animation */
+		animation-duration: 0s !important;
+		/* biome-ignore lint/complexity/noImportantStyles: must beat the UA's default view-transition animation */
+		animation-delay: 0s !important;
+	}
 }
 
 body {
-  background: var(--background);
-  background-image:
-    radial-gradient(rgba(26, 23, 20, 0.045) 0.55px, transparent 0.7px),
-    radial-gradient(rgba(255, 255, 255, 0.32) 0.7px, transparent 0.9px),
-    repeating-linear-gradient(103deg, rgba(26, 23, 20, 0.018) 0 1px, transparent 1px 7px),
-    repeating-linear-gradient(13deg, rgba(255, 255, 255, 0.08) 0 1px, transparent 1px 11px);
-  background-attachment: fixed;
-  background-size: 7px 7px, 11px 11px, 37px 37px, 53px 53px;
-  background-blend-mode: multiply, screen, multiply, screen;
-  color: var(--foreground);
+	background: var(--background);
+	background-image:
+		radial-gradient(rgba(26, 23, 20, 0.045) 0.55px, transparent 0.7px),
+		radial-gradient(rgba(255, 255, 255, 0.32) 0.7px, transparent 0.9px),
+		repeating-linear-gradient(
+			103deg,
+			rgba(26, 23, 20, 0.018) 0 1px,
+			transparent 1px 7px
+		),
+		repeating-linear-gradient(
+			13deg,
+			rgba(255, 255, 255, 0.08) 0 1px,
+			transparent 1px 11px
+		);
+	background-attachment: fixed;
+	background-size:
+		7px 7px,
+		11px 11px,
+		37px 37px,
+		53px 53px;
+	background-blend-mode: multiply, screen, multiply, screen;
+	color: var(--foreground);
 }
 
 /* Landscape hero slides get cropped by the fixed-height hero, so the
    active one pans slowly — matches the design canvas's HTML shell. */
 @keyframes heroPan {
-  from {
-    transform: scale(1.1) translate3d(-2.2%, 0.6%, 0);
-  }
-  to {
-    transform: scale(1.1) translate3d(2.2%, -0.6%, 0);
-  }
+	from {
+		transform: scale(1.1) translate3d(-2.2%, 0.6%, 0);
+	}
+	to {
+		transform: scale(1.1) translate3d(2.2%, -0.6%, 0);
+	}
 }
 
 .gallery-overlay {
-  opacity: 0;
-  transition: opacity 0.2s ease;
+	opacity: 0;
+	transition: opacity 0.2s ease;
 }
 .gallery-card:hover .gallery-overlay,
 .gallery-card:focus-visible .gallery-overlay {
-  opacity: 1;
+	opacity: 1;
 }
 
 @keyframes logoSlideIn {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(5%);
-  }
+	from {
+		transform: translateY(100%);
+	}
+	to {
+		transform: translateY(5%);
+	}
 }
 .logo-mark {
-  overflow: hidden;
-  border-bottom: 3px solid #343434;
-  position: relative;
-  bottom: 16px;
+	overflow: hidden;
+	border-bottom: 3px solid #343434;
+	position: relative;
+	bottom: 16px;
 }
 .logo-mark-img {
-  display: block;
-  transform: translateY(5%);
-  animation: logoSlideIn 0.6s ease-out;
-  transition: transform 2s ease;
-  will-change: transform;
+	display: block;
+	transform: translateY(5%);
+	animation: logoSlideIn 0.6s ease-out;
+	transition: transform 2s ease;
+	will-change: transform;
 }
 .logo-link .logo-mark-img:hover {
-  transform: translateY(100%);
-  transition: transform 0.3s linear;
+	transform: translateY(100%);
+	transition: transform 0.3s linear;
 }
 
 .logo-wordmark {
-  display: inline-flex;
-  align-items: center;
+	display: inline-flex;
+	align-items: center;
 }
 @media (max-width: 760px) {
-  .logo-wordmark {
-    display: none;
-  }
-}
-
-.nav-burger {
-  display: none;
-}
-@media (max-width: 760px) {
-  .nav-links-row {
-    display: none !important;
-  }
-  .nav-burger {
-    display: inline-flex;
-  }
+	.logo-wordmark {
+		display: none;
+	}
 }

@@ -1,5 +1,5 @@
-import { ArtworkForm } from '@/components/admin/ArtworkForm';
+import { ArtworkForm } from "@/components/admin/ArtworkForm";
 
 export default function NewArtworkPage() {
-  return <ArtworkForm />;
+	return <ArtworkForm />;
 }
