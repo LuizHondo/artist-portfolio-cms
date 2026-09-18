@@ -45,6 +45,18 @@ export function AdminSidebar() {
 						Manage Artworks
 					</Link>
 				</li>
+				<li className="mb-2 flex-1 min-w-[100px] md:flex-none md:min-w-0">
+					<Link
+						href="/admin/about"
+						className={
+							pathname?.startsWith("/admin/about")
+								? menuLinkActiveClass
+								: menuLinkClass
+						}
+					>
+						Manage About Me
+					</Link>
+				</li>
 			</ul>
 
 			<div

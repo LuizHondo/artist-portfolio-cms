@@ -1,20 +1,10 @@
 import { homeV1Styles as hs } from "@/components/home/homeStyles";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { getAbout } from "@/lib/api/about";
 import { Icon, Paper } from "@/lib/design/shared";
 import { CONTACT_EMAIL, enabledSocials } from "@/lib/social-links";
 import { COLORS } from "@/lib/theme";
-
-// No backend model for bio/skills copy (proposal.md) — local constants,
-// matching the design canvas's data.jsx RAUL.perfil.
-const SKILLS = [
-	"Illustration",
-	"Character Design",
-	"Concept Art",
-	"Storyboard",
-	"Environment Design",
-	"Visual Development",
-];
 
 const s = {
 	page: {
@@ -170,7 +160,9 @@ const s = {
 	},
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+	const about = await getAbout();
+
 	return (
 		<Paper style={s.page}>
 			<PublicNav active="About" variant="bar" />
@@ -178,36 +170,22 @@ export default function AboutPage() {
 			<div style={{ padding: "56px 56px 0" }}>
 				<div style={hs.sectionHead}>
 					<h2 style={hs.sectionTitle}>About</h2>
-					<div style={hs.sectionSub}>Curitiba, Brazil · est. 1998</div>
+					<div style={hs.sectionSub}>Curitiba, Brazil · est. 2000</div>
 				</div>
 			</div>
 
 			<section style={s.hero}>
-				{/* biome-ignore lint/performance/noImgElement: static portrait, not from an admin-entered URL */}
-				<img
-					src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=1200&q=70"
-					alt="Raul"
-					style={s.heroImg}
-				/>
+				{/* biome-ignore lint/performance/noImgElement: admin-entered URL, arbitrary hosts */}
+				<img src={about.heroImage} alt="Raul" style={s.heroImg} />
 				<div style={s.heroRight}>
 					<h1 style={s.bigName}>Raul Barbosa</h1>
-					<div style={s.bigTag}>
-						Illustrator · Character Design · Concept Art
-					</div>
+					<div style={s.bigTag}>{about.tagline}</div>
 					<div style={s.bio}>
-						<p style={s.bioP}>
-							What&apos;s up — I&apos;m a Brazilian illustrator passionate about
-							coffee, cats, and beautifully designed books.
-						</p>
-						<p style={s.bioP}>
-							With a background in Animation Design, I focus on the conceptual
-							side of projects — ideation, planning, and visual development. I
-							love stories where a single frame holds enough light, shadow, and
-							acting to make you stop and look closer.
-						</p>
-						<p style={s.bioP}>
-							Available for commissions, concept work, and the occasional cover.
-						</p>
+						{about.bio.map((paragraph) => (
+							<p key={paragraph} style={s.bioP}>
+								{paragraph}
+							</p>
+						))}
 					</div>
 
 					<div
@@ -256,7 +234,7 @@ export default function AboutPage() {
 				<div>
 					<h2 style={s.h2}>Disciplines</h2>
 					<div style={s.skills}>
-						{SKILLS.map((skill, i) => (
+						{about.disciplines.map((skill, i) => (
 							<div key={skill} style={s.skillRow}>
 								<span style={s.skillName}>{skill}</span>
 								<span style={s.skillNum}>0{i + 1}</span>
@@ -268,26 +246,12 @@ export default function AboutPage() {
 				<div>
 					<h2 style={s.h2}>Colophon</h2>
 					<div style={s.colophon}>
-						<div style={s.colophonRow}>
-							<span style={s.colKey}>Tools</span>
-							<span style={s.colVal}>Procreate · Photoshop · pencil</span>
-						</div>
-						<div style={s.colophonRow}>
-							<span style={s.colKey}>Clients</span>
-							<span style={s.colVal}>vGen · Editora Aleph · Folha</span>
-						</div>
-						<div style={s.colophonRow}>
-							<span style={s.colKey}>Awards</span>
-							<span style={s.colVal}>vGen Wings 2026 · Honorable Mention</span>
-						</div>
-						<div style={s.colophonRow}>
-							<span style={s.colKey}>Speaks</span>
-							<span style={s.colVal}>Portuguese · English</span>
-						</div>
-						<div style={s.colophonRow}>
-							<span style={s.colKey}>Lives</span>
-							<span style={s.colVal}>Curitiba, with two cats</span>
-						</div>
+						{about.colophon.map((row) => (
+							<div key={row.key} style={s.colophonRow}>
+								<span style={s.colKey}>{row.key}</span>
+								<span style={s.colVal}>{row.value}</span>
+							</div>
+						))}
 					</div>
 				</div>
 			</section>

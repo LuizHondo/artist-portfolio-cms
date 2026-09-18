@@ -11,6 +11,15 @@ export interface ArtworkEntry {
 	displayOrder: number;
 }
 
+export interface About {
+	tagline: string;
+	bio: string[];
+	heroImage: string;
+	disciplines: string[];
+	colophon: Array<{ key: string; value: string }>;
+	updatedAt: string;
+}
+
 export interface Tag {
 	id: string;
 	name: string;
@@ -27,6 +36,7 @@ export interface Artwork {
 	medium: string;
 	yearCreated: number;
 	createdAt: string;
+	updatedAt: string;
 	entries: ArtworkEntry[];
 	artworkTags: Array<{ tag: Tag }>;
 }
