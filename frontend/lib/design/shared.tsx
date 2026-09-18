@@ -91,7 +91,8 @@ export type IconName =
 	| "youtube"
 	| "mail"
 	| "arrow"
-	| "arrow-left";
+	| "arrow-left"
+	| "close";
 
 export function Icon({
 	name,
@@ -190,6 +191,13 @@ export function Icon({
 				// biome-ignore lint/a11y/noSvgWithoutTitle: aria-hidden is set via the spread `props`
 				<svg {...props}>
 					<path d="M19 12 H5 M11 6 L5 12 L11 18" />
+				</svg>
+			);
+		case "close":
+			return (
+				// biome-ignore lint/a11y/noSvgWithoutTitle: aria-hidden is set via the spread `props`
+				<svg {...props}>
+					<path d="M6 6 L18 18 M18 6 L6 18" />
 				</svg>
 			);
 		default:
