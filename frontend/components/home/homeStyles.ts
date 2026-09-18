@@ -5,7 +5,7 @@ import { COLORS } from "@/lib/theme";
 export const homeV1Styles: Record<string, CSSProperties> = {
 	page: {
 		width: "100%",
-		maxWidth: 1440,
+		maxWidth: 1800,
 		margin: "0 auto",
 		color: COLORS.ink,
 		fontFamily: '"Newsreader", Georgia, serif',
