@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { homeV1Styles as s } from "@/components/home/homeStyles";
 import MorphSlider from "@/components/home/MorphSlider";
+import { EnterButton } from "@/components/home/EnterButton";
+import { SocialIcon } from "@/components/home/SocialIcon";
 import { PublicNav } from "@/components/PublicNav";
 import { Icon } from "@/lib/design/shared";
 import { enabledSocials } from "@/lib/social-links";
@@ -164,18 +166,15 @@ export function ScreensaverGate({
 										Illustrator and Animator
 									</div>
 								</div>
-								<div style={{ ...s.hbLinksRow, width: "100%", marginTop: 36 }}>
+								<div style={{ ...s.hbLinksRow, width: "100%", marginTop: 21 }}>
 									{enabledSocials.map((social) => (
-										<a
+										<SocialIcon
 											key={social.key}
-											href={social.url}
-											target="_blank"
-											rel="noreferrer"
-											style={{ ...s.hbrSocialBtn, textDecoration: "none" }}
-											title={social.url}
-										>
-											<Icon name={social.key} size={14} color={COLORS.cream} />
-										</a>
+											socialKey={social.key}
+											url={social.url}
+											size={14}
+											style={s.hbrSocialBtn}
+										/>
 									))}
 								</div>
 							</div>
@@ -212,7 +211,7 @@ export function ScreensaverGate({
 									Illustrator and Animator
 								</div>
 							</div>
-							<a
+							<EnterButton
 								href="/home"
 								style={{
 									...s.mobileEnter,
@@ -227,7 +226,7 @@ export function ScreensaverGate({
 								}}
 							>
 								Enter Portfolio Site
-							</a>
+							</EnterButton>
 							{enabledSocials.map((social) => (
 								<a
 									key={social.key}
@@ -271,7 +270,7 @@ export function ScreensaverGate({
 									justifyContent: "center",
 								}}
 							>
-								<a
+								<EnterButton
 									href="/home"
 									style={{
 										...s.hbrEnterBtn,
@@ -290,7 +289,7 @@ export function ScreensaverGate({
 									}}
 								>
 									Enter Portfolio Site
-								</a>
+								</EnterButton>
 							</div>
 						</div>
 					)}
