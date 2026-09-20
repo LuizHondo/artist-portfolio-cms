@@ -527,7 +527,6 @@ export default function MorphSlider({
 	const containerRef = useRef(null);
 	const engineRef = useRef(null);
 	const [index, setIndex] = useState(startIndex);
-	const [hovering, setHovering] = useState(false);
 
 	const optsRef = useRef();
 	optsRef.current = {
@@ -570,13 +569,13 @@ export default function MorphSlider({
 	const handlePrev = useCallback(() => engineRef.current?.prev(), []);
 
 	useEffect(() => {
-		if (!autoplay || hovering) return undefined;
+		if (!autoplay) return undefined;
 		const id = setTimeout(
 			() => engineRef.current?.next(),
 			Math.max(autoplayDelay, 1) * 1000,
 		);
 		return () => clearTimeout(id);
-	}, [autoplay, autoplayDelay, hovering]);
+	}, [autoplay, autoplayDelay, index]);
 
 	useEffect(() => {
 		const el = containerRef.current;
@@ -639,7 +638,6 @@ export default function MorphSlider({
 	const hasCaptions = items.some((item) => item.caption);
 
 	return (
-		// biome-ignore lint/a11y/noStaticElementInteractions: hover only pauses autoplay, no keyboard equivalent needed
 		<div
 			className={`morph-slider ${className}`.trim()}
 			style={{
@@ -647,8 +645,6 @@ export default function MorphSlider({
 				"--ms-swap": `${(duration * 0.66).toFixed(3)}s`,
 				"--ms-dot": `${(duration * 0.45).toFixed(3)}s`,
 			}}
-			onMouseEnter={() => setHovering(true)}
-			onMouseLeave={() => setHovering(false)}
 			{...props}
 		>
 			{/* biome-ignore lint/a11y/useSemanticElements: role="group" + aria-roledescription="carousel" is the W3C ARIA APG carousel pattern */}

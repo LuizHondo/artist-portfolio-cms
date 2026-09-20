@@ -110,8 +110,9 @@ export function ScreensaverGate({
 							intensity={0.55}
 							aberration={0.35}
 							drift={0.4}
-							autoplay
+							autoplay={true}
 							autoplayDelay={3}
+							loop={true}
 							showCaptions={true}
 							showControls={false}
 							showIndicators={false}
