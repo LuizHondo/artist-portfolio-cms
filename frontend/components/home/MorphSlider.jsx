@@ -654,6 +654,8 @@ export default function MorphSlider({
 				role="group"
 				aria-roledescription="carousel"
 				aria-label="Image morph slider"
+				// biome-ignore lint/a11y/noNoninteractiveTabindex: carousel stage needs focus for ArrowLeft/ArrowRight nav, per the APG pattern
+				tabIndex={0}
 				onKeyDown={onKeyDown}
 			/>
 

@@ -16,10 +16,8 @@ export default async function ArtworkPage({
 	params: Promise<{ slug: string }>;
 }) {
 	const { slug } = await params;
-	const artwork = await getBySlug(slug);
+	const [artwork, all] = await Promise.all([getBySlug(slug), getArtworks()]);
 	if (!artwork) notFound();
-
-	const all = await getArtworks();
 	const related = all
 		.filter((x) => x.slug !== artwork.slug && x.featuredPriority > 0)
 		.slice(0, 6);
@@ -66,7 +64,7 @@ export default async function ArtworkPage({
 				</div>
 			</div>
 
-			<ImageLightbox>
+			<ImageLightbox key={artwork.slug}>
 				<div style={s.heroWrap} className="mx-5 pb-10 md:mx-16 md:pb-[60px]">
 					<div>
 						{/* biome-ignore lint/performance/noImgElement: arbitrary admin-entered URL */}

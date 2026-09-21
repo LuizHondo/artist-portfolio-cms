@@ -181,8 +181,9 @@ export default async function AboutPage() {
 					<h1 style={s.bigName}>Raul Barbosa</h1>
 					<div style={s.bigTag}>{about.tagline}</div>
 					<div style={s.bio}>
-						{about.bio.map((paragraph) => (
-							<p key={paragraph} style={s.bioP}>
+						{about.bio.map((paragraph, i) => (
+							// biome-ignore lint/suspicious/noArrayIndexKey: paragraphs aren't guaranteed unique, order is fixed by admin edit
+							<p key={i} style={s.bioP}>
 								{paragraph}
 							</p>
 						))}
@@ -246,8 +247,9 @@ export default async function AboutPage() {
 				<div>
 					<h2 style={s.h2}>Colophon</h2>
 					<div style={s.colophon}>
-						{about.colophon.map((row) => (
-							<div key={row.key} style={s.colophonRow}>
+						{about.colophon.map((row, i) => (
+							// biome-ignore lint/suspicious/noArrayIndexKey: keys aren't guaranteed unique, order is fixed by admin edit
+							<div key={i} style={s.colophonRow}>
 								<span style={s.colKey}>{row.key}</span>
 								<span style={s.colVal}>{row.value}</span>
 							</div>

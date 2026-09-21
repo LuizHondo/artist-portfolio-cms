@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { LogoMark } from "@/components/LogoMark";
 import { COLORS } from "@/lib/theme";
 
@@ -92,10 +95,12 @@ export function PublicNav({
 	locked?: boolean;
 }) {
 	const v = variants[variant];
+	const [menuOpen, setMenuOpen] = useState(false);
 	return (
 		<nav
 			style={{
 				...v.nav,
+				position: "relative",
 				opacity: locked ? 0 : 1,
 				pointerEvents: locked ? "none" : "auto",
 				transition: "opacity .8s",
@@ -119,7 +124,7 @@ export function PublicNav({
 					<span style={logoScript}>Raul Barbosa</span>
 				</span>
 			</Link>
-			<div style={navLinksRow}>
+			<div className="nav-links-row" style={navLinksRow}>
 				{links.map((l) => (
 					<Link
 						key={l.label}
@@ -131,6 +136,73 @@ export function PublicNav({
 					</Link>
 				))}
 			</div>
+
+			<button
+				type="button"
+				className="nav-burger"
+				aria-label={menuOpen ? "Close menu" : "Open menu"}
+				aria-expanded={menuOpen}
+				onClick={() => setMenuOpen((o) => !o)}
+				style={{
+					background: "none",
+					border: "none",
+					color: "inherit",
+					cursor: "pointer",
+					padding: 8,
+				}}
+			>
+				<svg
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="1.5"
+					strokeLinecap="round"
+					aria-hidden="true"
+				>
+					{menuOpen ? (
+						<path d="M5 5 L19 19 M19 5 L5 19" />
+					) : (
+						<path d="M4 7 H20 M4 12 H20 M4 17 H20" />
+					)}
+				</svg>
+			</button>
+
+			{menuOpen && (
+				<div
+					className="nav-mobile-menu"
+					style={{
+						position: "absolute",
+						top: "100%",
+						left: 0,
+						right: 0,
+						flexDirection: "column",
+						background: variant === "hero" ? COLORS.ink : COLORS.background,
+						color: variant === "hero" ? COLORS.cream : COLORS.ink,
+					}}
+				>
+					{links.map((l) => (
+						<Link
+							key={l.label}
+							href={l.href}
+							onClick={() => setMenuOpen(false)}
+							style={{
+								padding: "16px 24px",
+								textDecoration: "none",
+								color: l.label === active ? COLORS.accent : "inherit",
+								fontFamily: '"IBM Plex Sans", "Helvetica Neue", sans-serif',
+								fontSize: 13,
+								letterSpacing: "0.14em",
+								textTransform: "uppercase" as const,
+								fontWeight: 600,
+							}}
+						>
+							{l.label}
+						</Link>
+					))}
+				</div>
+			)}
 		</nav>
 	);
 }

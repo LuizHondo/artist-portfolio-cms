@@ -2,7 +2,7 @@ import type { Artwork } from "../types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-async function fetchJson<T>(path: string): Promise<T> {
+export async function fetchJson<T>(path: string): Promise<T> {
 	const res = await fetch(`${API_URL}${path}`, { cache: "no-store" });
 	if (!res.ok) {
 		throw new Error(`Request to ${path} failed with ${res.status}`);

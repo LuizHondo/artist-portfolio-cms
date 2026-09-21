@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AdminGuard } from "@/components/admin/AdminGuard";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { getArtworks } from "@/lib/api/artworks";
 import type { Artwork } from "@/lib/types";
 
 const TIERS = [
+	{ priority: 0, label: "Unfeatured" },
 	{ priority: 1, label: "Featured 1" },
 	{ priority: 2, label: "Featured 2" },
 	{ priority: 3, label: "Archive" },
@@ -28,6 +29,16 @@ function DashboardContent() {
 			}
 		})();
 	}, []);
+
+	const byTier = useMemo(() => {
+		const map = new Map<number, Artwork[]>();
+		for (const a of artworks) {
+			const rows = map.get(a.featuredPriority);
+			if (rows) rows.push(a);
+			else map.set(a.featuredPriority, [a]);
+		}
+		return map;
+	}, [artworks]);
 
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8 min-h-[calc(100vh-200px)]">
@@ -53,9 +64,7 @@ function DashboardContent() {
 						</Link>
 
 						{TIERS.map(({ priority, label }) => {
-							const rows = artworks.filter(
-								(a) => a.featuredPriority === priority,
-							);
+							const rows = byTier.get(priority) ?? [];
 							return (
 								<section key={priority} className="mb-8">
 									<h2 className="text-[#333]">

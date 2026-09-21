@@ -8,13 +8,7 @@ import {
 	SiX,
 	SiYoutube,
 } from "@icons-pack/react-simple-icons";
-import {
-	type CSSProperties,
-	type ReactNode,
-	useEffect,
-	useState,
-	ViewTransition,
-} from "react";
+import { type CSSProperties, type ReactNode, ViewTransition } from "react";
 import { COLORS } from "@/lib/theme";
 
 // Paper wraps every public page's content, so it's the one place a
@@ -28,33 +22,20 @@ export function Paper({
 	children: ReactNode;
 	style?: CSSProperties;
 }) {
-	const [showTransition, setShowTransition] = useState(true);
-
-	useEffect(() => {
-		// Skip ViewTransition when document is hidden to avoid "skipped" console warnings
-		const handleVisibilityChange = () => {
-			setShowTransition(document.visibilityState === "visible");
-		};
-
-		document.addEventListener("visibilitychange", handleVisibilityChange);
-		return () =>
-			document.removeEventListener("visibilitychange", handleVisibilityChange);
-	}, []);
-
-	const content = (
-		<div
-			style={{
-				background: COLORS.background,
-				color: COLORS.ink,
-				fontFamily: '"Newsreader", Georgia, serif',
-				...style,
-			}}
-		>
-			{children}
-		</div>
+	return (
+		<ViewTransition>
+			<div
+				style={{
+					background: COLORS.background,
+					color: COLORS.ink,
+					fontFamily: '"Newsreader", Georgia, serif',
+					...style,
+				}}
+			>
+				{children}
+			</div>
+		</ViewTransition>
 	);
-
-	return showTransition ? <ViewTransition>{content}</ViewTransition> : content;
 }
 
 // Render **bold** and *italic* spans inline. No markdown lib — tiny regex.

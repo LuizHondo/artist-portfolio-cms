@@ -211,3 +211,21 @@ dialog.lightbox[open]::backdrop {
 		display: none;
 	}
 }
+
+.nav-burger {
+	display: none;
+}
+@media (max-width: 760px) {
+	.nav-links-row {
+		display: none;
+	}
+	.nav-burger {
+		display: inline-flex;
+	}
+	.nav-mobile-menu {
+		display: flex;
+	}
+}
+.nav-mobile-menu {
+	display: none;
+}

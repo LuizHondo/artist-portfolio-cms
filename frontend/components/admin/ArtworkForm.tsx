@@ -150,6 +150,9 @@ function ArtworkFormContent({ slug }: { slug?: string }) {
 		displayOrder: 1,
 	});
 
+	const nextDisplayOrder = () =>
+		entries.reduce((max, e) => Math.max(max, e.displayOrder ?? 0), 0) + 1;
+
 	useEffect(() => {
 		(async () => {
 			try {
@@ -174,6 +177,14 @@ function ArtworkFormContent({ slug }: { slug?: string }) {
 					});
 					setEntries(artwork.entries);
 					setOriginalEntries(artwork.entries);
+					setNewEntry((prev) => ({
+						...prev,
+						displayOrder:
+							artwork.entries.reduce(
+								(max, e) => Math.max(max, e.displayOrder ?? 0),
+								0,
+							) + 1,
+					}));
 				}
 
 				setLoading(false);
@@ -214,11 +225,12 @@ function ArtworkFormContent({ slug }: { slug?: string }) {
 
 	const handleAddEntry = () => {
 		if (newEntryComplete) {
-			setEntries([...entries, { ...newEntry }]);
+			const added = { ...newEntry };
+			setEntries([...entries, added]);
 			setNewEntry({
 				columns: 1,
 				images: [{ ...emptyImage }],
-				displayOrder: entries.length + 2,
+				displayOrder: Math.max(nextDisplayOrder(), added.displayOrder + 1),
 			});
 		}
 	};

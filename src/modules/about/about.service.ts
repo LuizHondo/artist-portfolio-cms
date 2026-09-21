@@ -50,13 +50,11 @@ function toDto(row: {
 }
 
 export class AboutService {
-  // Get the singleton About row, creating it from defaults on first read.
+  // Get the singleton About row, seeding it from defaults if it doesn't exist yet.
   async getAbout() {
-    const row = await prisma.about.upsert({
-      where: { id: SINGLETON_ID },
-      update: {},
-      create: DEFAULTS,
-    });
+    const row =
+      (await prisma.about.findUnique({ where: { id: SINGLETON_ID } })) ??
+      (await prisma.about.create({ data: DEFAULTS }));
     return toDto(row);
   }
 
