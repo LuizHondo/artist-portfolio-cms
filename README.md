@@ -1,28 +1,21 @@
-# Raul Barbosa Neto — Portfolio CMS
+# Raul Barbosa Neto — Portfolio CMS (backend)
 
-Portfolio site + admin CMS for Raul Barbosa Neto (illustrator, 3D sculptor, animator).
+Backend API for Raul Barbosa Neto's portfolio site + admin CMS (illustrator, 3D sculptor, animator).
 
-- **Backend**: Express + Prisma (SQLite), `src/`
-- **Frontend**: Next.js 16 (App Router) + React 19, `frontend/`
+- **Backend**: Express + Prisma (SQLite), `src/` (this repo)
+- **Frontend**: Next.js 16 (App Router) + React 19 — separate repo, [artist-portfolio](https://github.com/LuizHondo/artist-portfolio)
 
 ## Getting started
 
 ```bash
-# backend
 npm install
 cp .env.example .env
 npm run db:migrate
 npm run db:seed
 npm run dev          # http://localhost:3000
-
-# frontend (separate terminal)
-cd frontend
-npm install
-cp .env.example .env
-npm run dev           # http://localhost:3001
 ```
 
-`.env` (backend):
+`.env`:
 ```
 DATABASE_URL="file:./dev.db"
 PORT=3000
@@ -31,10 +24,7 @@ ADMIN_EMAIL=admin@raulbarbosa.com
 ADMIN_PASSWORD=...
 ```
 
-`frontend/.env`:
-```
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
-```
+See the frontend repo for its own setup (`NEXT_PUBLIC_API_URL=http://localhost:3000/api`).
 
 ## Data model (`prisma/schema.prisma`)
 
@@ -95,8 +85,6 @@ Validation via Zod (`src/shared/schemas.ts`). Responses are `{ success, data }` 
 
 **Tags** are system-controlled — no admin CRUD route exists for them, only reads plus `tagIds` on artwork create/update.
 
-**Frontend**: server components fetch with `cache: "no-store"` (always fresh, no ISR). `/admin/*` pages are client components gated by `AdminGuard`, which checks for a stored JWT and redirects to `/admin/login` if missing/invalid.
-
 ## Structure
 
 ```
@@ -106,24 +94,16 @@ src/
   modules/{artworks,tags,admin,about}/  controller + service + routes per domain
   shared/{auth,schemas}.ts  JWT/bcrypt helpers, Zod schemas
 prisma/schema.prisma
-
-frontend/
-  app/                       Next.js routes: home, artworks, artwork/[slug], about, admin/*
-  components/                UI + admin form components
-  lib/api/                   fetch wrappers per resource
-  lib/design/, lib/theme.ts  shared styling
 ```
 
 ## Scripts
 
-Backend: `npm run dev|build|start|db:migrate|db:seed|db:reset|test`
-Frontend: `npm run dev|build|start|lint`
+`npm run dev|build|start|db:migrate|db:seed|db:reset|test`
 
 ## Deploy
 
 ```bash
 npm run build && npx prisma migrate deploy && NODE_ENV=production npm start
-cd frontend && npm run build && npm start
 ```
 
 Swap `DATABASE_URL` for a production Postgres/MySQL URL if moving off SQLite, and set a strong `JWT_SECRET`.
