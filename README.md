@@ -81,6 +81,22 @@ DELETE /admin/entries/:entryId/images/:position
 
 Validation via Zod (`src/shared/schemas.ts`). Responses are `{ success, data }` / `{ error }`.
 
+## How it works
+
+**Request flow**: each domain (`artworks`, `tags`, `admin`, `about`) follows `routes → controller → service`, service does the Prisma calls. A global error handler in `app.ts` catches anything a controller doesn't handle itself.
+
+**Auth**: login issues a JWT (7-day expiry, `{id, email}`, signed with `JWT_SECRET`). `authMiddleware` reads `Authorization: Bearer <token>` and attaches `req.admin`. Every `/admin/*` route except `/admin/login` requires it — single admin account, no roles.
+
+**`featuredPriority`** is the only thing driving artwork placement: `0` = gallery-only, `1` = hero slot, `2`/`3` = featured grid tiers. Just an int the admin sets, no separate featured table.
+
+**Entry/image invariant**: an `ArtworkEntry` is one row of the process timeline with a `columns` count (1–5); it must have exactly that many `ArtworkEntryImage` rows, each with a unique `position` (1..columns). `deleteImage` re-numbers the remaining images after a delete so positions stay contiguous — the frontend renders by position within the row.
+
+**About** is a singleton row (`id` always `"singleton"`); `getAbout()` find-or-creates it from defaults on first read instead of needing a seed migration.
+
+**Tags** are system-controlled — no admin CRUD route exists for them, only reads plus `tagIds` on artwork create/update.
+
+**Frontend**: server components fetch with `cache: "no-store"` (always fresh, no ISR). `/admin/*` pages are client components gated by `AdminGuard`, which checks for a stored JWT and redirects to `/admin/login` if missing/invalid.
+
 ## Structure
 
 ```
